@@ -2,19 +2,42 @@ import React, { useState } from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [errors, setErrors] = useState({});
 
     const handleLogin = (e) => {
         e.preventDefault();
-        alert(`Logged in with ${email}`);
-    };
-    const handleRegister = () => alert("Redirect to Register page");
-    const handleGoogle = () => alert("Login with Google");
-    const handleApple = () => alert("Login with Apple");
 
+        let newErrors = {};
+
+        if (!email || !email.includes("@")) {
+            newErrors.email = "Invalid email";
+        }
+
+        if (!password || password.length < 4) {
+            newErrors.password = "Wrong password";
+        }
+
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length === 0) {
+            alert("Login successful");
+        }
+    };
+
+    const inputStyle = (hasError) => ({
+        borderRadius: "12px",
+        padding: "14px",
+        fontSize: "16px",
+        border: hasError ? "2px solid #b04a4a" : "1px solid #e6d3b3",
+    });
 
     const buttonStyle = {
         width: "100%",
@@ -26,7 +49,6 @@ const Login = () => {
         color: "#5a3e2b",
         padding: "12px",
         marginBottom: "10px",
-        transition: "background-color 0.2s",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -36,6 +58,7 @@ const Login = () => {
     const buttonHover = (e) => {
         e.currentTarget.style.backgroundColor = "#e6d3b3";
     };
+
     const buttonLeave = (e) => {
         e.currentTarget.style.backgroundColor = "#d2b48c";
     };
@@ -48,7 +71,7 @@ const Login = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 backgroundColor: "#fdf5ec",
-                fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+                fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
             }}
         >
             <Card
@@ -72,55 +95,51 @@ const Login = () => {
                     Login
                 </h2>
 
-                <Form onSubmit={handleLogin}>
-                    <Form.Group className="mb-3" controlId="formEmail">
-                        <Form.Label
-                            style={{
-                                color: "#5a3e2b",
-                                fontWeight: "600",
-                                fontSize: "16px",
-                            }}
-                        >
+                <Form onSubmit={handleLogin} noValidate>
+                    <Form.Group className="mb-3">
+                        <Form.Label style={{ color: "#5a3e2b", fontWeight: "600" }}>
                             Email address
                         </Form.Label>
+
                         <Form.Control
                             type="email"
                             placeholder="Enter email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            style={{
-                                borderRadius: "12px",
-                                border: "1px solid #e6d3b3",
-                                padding: "14px",
-                                fontSize: "16px",
-                                fontWeight: "500",
+                            style={inputStyle(errors.email)}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                setErrors((prev) => ({ ...prev, email: "" }));
                             }}
                         />
+
+                        {errors.email && (
+                            <div style={{ color: "#b04a4a", fontSize: "14px", marginTop: "5px" }}>
+                                {errors.email}
+                            </div>
+                        )}
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formPassword">
-                        <Form.Label
-                            style={{
-                                color: "#5a3e2b",
-                                fontWeight: "600",
-                                fontSize: "16px",
-                            }}
-                        >
+                    <Form.Group className="mb-3">
+                        <Form.Label style={{ color: "#5a3e2b", fontWeight: "600" }}>
                             Password
                         </Form.Label>
+
                         <Form.Control
                             type="password"
                             placeholder="Password"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            style={{
-                                borderRadius: "12px",
-                                border: "1px solid #e6d3b3",
-                                padding: "14px",
-                                fontSize: "16px",
-                                fontWeight: "500",
+                            style={inputStyle(errors.password)}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                                setErrors((prev) => ({ ...prev, password: "" }));
                             }}
                         />
+
+                        {errors.password && (
+                            <div style={{ color: "#b04a4a", fontSize: "14px", marginTop: "5px" }}>
+                                {errors.password}
+                            </div>
+                        )}
                     </Form.Group>
 
                     <Button
@@ -134,7 +153,7 @@ const Login = () => {
                 </Form>
 
                 <Button
-                    onClick={handleRegister}
+                    onClick={() => navigate("/register")}
                     style={buttonStyle}
                     onMouseOver={buttonHover}
                     onMouseOut={buttonLeave}
@@ -147,26 +166,25 @@ const Login = () => {
                         textAlign: "center",
                         margin: "15px 0",
                         color: "#5a3e2b",
-                        fontWeight: "500",
                     }}
                 >
                     or continue with
                 </div>
 
                 <Button
-                    onClick={handleGoogle}
                     style={buttonStyle}
                     onMouseOver={buttonHover}
                     onMouseOut={buttonLeave}
+                    onClick={() => alert("Login with Google")}
                 >
                     <FcGoogle size={24} /> Continue with Google
                 </Button>
 
                 <Button
-                    onClick={handleApple}
                     style={buttonStyle}
                     onMouseOver={buttonHover}
                     onMouseOut={buttonLeave}
+                    onClick={() => alert("Login with Apple")}
                 >
                     <FaApple size={22} /> Continue with Apple
                 </Button>
