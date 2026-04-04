@@ -1,25 +1,15 @@
 import React from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { Routes, Route } from "react-router-dom";
-import Navbar from "./components/navbar.jsx";
-import Login from "./components/login.jsx";
-import Logo from "./components/logo.jsx";
+import "bootstrap/dist/css/bootstrap.min.css";
+import CreateAd from "./components/CreateAd";
 
 function App() {
-    return (
-        <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#fdf5ec', minHeight: '100vh' }}>
-            <Navbar />
-            <div style={{ marginTop: "65px" }}>
-                <div className="container text-center mt-4">
-                <Routes>
-                    <Route path="/" element={<Logo />} />
-                    <Route path="/login" element={<Login />} />
-                </Routes>
-            </div>
-            </div>
-
-        </div>
-    );
+  return (
+    <Routes>
+      <Route path="/" element={<CreateAd />} />
+      <Route path="/create-ad" element={<CreateAd />} />
+    </Routes>
+  );
 }
 
 export default App;
