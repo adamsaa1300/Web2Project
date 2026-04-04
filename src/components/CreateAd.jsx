@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; 
 import Navbar from "./navbar";
-// استيراد الأيقونات من مكتبة react-icons
 import { 
   FaCameraRetro, 
   FaLightbulb, 
