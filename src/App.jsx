@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/navbar.jsx";
 import Login from "./components/login.jsx";
 import Logo from "./components/logo.jsx";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
     return (
@@ -11,10 +12,11 @@ function App() {
             <Navbar />
             <div style={{ marginTop: "65px" }}>
                 <div className="container text-center mt-4">
-                <Routes>
-                    <Route path="/" element={<Logo />} />
-                    <Route path="/login" element={<Login />} />
-                </Routes>
+              <Routes>
+    <Route path="/" element={<Logo />} />
+    <Route path="/login" element={<Login />} />
+    <Route path="/profile" element={<ProfilePage />} />
+</Routes>
             </div>
             </div>
 
