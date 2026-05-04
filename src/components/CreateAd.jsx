@@ -23,6 +23,8 @@ function CreateAd({ userRole }) {
     title: "",
     category: "",
     location: "",
+    university: "", 
+    college: "",    
     price: "",
     condition: "new",
     description: "",
@@ -48,6 +50,23 @@ function CreateAd({ userRole }) {
     "Gaza City", "Haifa", "Hebron", "Jaffa", "Jenin", "Jericho", 
     "Jerusalem", "Khan Yunis", "Nablus", "Nazareth", "Qalqilya", 
     "Rafah", "Ramallah", "Safed", "Salfit", "Tiberias", "Tubas", "Tulkarm"
+  ];
+
+  const universities = [
+    "Palestine University", 
+    "An-Najah National University", 
+    "Birzeit University", 
+    "Palestine Technical University (Kadoorie)"
+  ];
+
+  const colleges = [
+    "Medicine", 
+    "Engineering", 
+    "IT / Technology", 
+    "Law", 
+    "Business", 
+    "Arts", 
+    "Pharmacy"
   ];
 
   const handleChange = (e) => {
@@ -90,6 +109,8 @@ function CreateAd({ userRole }) {
     data.append("title", formData.title);
     data.append("category", formData.category);
     data.append("location", formData.location);
+    data.append("university", formData.university); 
+    data.append("college", formData.college);       
     data.append("price", Number(formData.price) || 0);
     data.append("condition", formData.condition);
     data.append("description", formData.description);
@@ -184,6 +205,25 @@ function CreateAd({ userRole }) {
                     <option value="">Select City</option>
                     {palestineCities.map(city => (
                       <option key={city} value={city.toLowerCase()}>{city}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label small fw-bold">University *</label>
+                  <select name="university" value={formData.university} onChange={handleChange} required className="form-select border-0 shadow-sm" style={{ backgroundColor: "#fcf9f5" }}>
+                    <option value="">Select University</option>
+                    {universities.map(uni => (
+                      <option key={uni} value={uni}>{uni}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label small fw-bold">Faculty *</label>
+                  <select name="college" value={formData.college} onChange={handleChange} required className="form-select border-0 shadow-sm" style={{ backgroundColor: "#fcf9f5" }}>
+                    <option value="">Select Faculty</option>
+                    {colleges.map(col => (
+                      <option key={col} value={col}>{col}</option>
                     ))}
                   </select>
                 </div>
