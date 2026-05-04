@@ -1,44 +1,27 @@
-import React from "react";
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import homebg from "../assets/homebg.jpg";
+import React, { useState } from "react";
+import { Container, Row, Col, Button, Form, Card } from "react-bootstrap";
 
-const Home = () => {
+const Search = () => {
+    const [results, setResults] = useState([]);
+
+    const handleSearch = () => {
+        const fakeData = [
+            { id: 1, title: "Laptop Dell", price: 500 },
+            { id: 2, title: "Medical Lab Coat", price: 30 },
+            { id: 3, title: "Engineering Calculator", price: 20 },
+        ];
+
+        setResults(fakeData);
+    };
+
     return (
-        <div style={{ backgroundColor: "#f6f1eb", minHeight: "100vh" }}>
-            <div
-                style={{
-                    position: "relative",
-                    height: "60vh",
-                    backgroundImage: `url(${homebg})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}
-            >
-                <div
-                    style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: "rgba(0,0,0,0.5)",
-                    }}
-                />
-
-                <div style={{ position: "relative", textAlign: "center", color: "white" }}>
-                    <h1 style={{ fontWeight: "bold" }}>Welcome to Sawweq</h1>
-                    <p>Your smart marketplace to buy and sell anything easily</p>
-                </div>
-            </div>
+        <div style={{ backgroundColor: "#f6f1eb", minHeight: "100vh", padding: "20px" }}>
 
             <Container
                 className="shadow p-4"
                 style={{
                     background: "white",
-                    marginTop: "-50px",
+                    marginTop: "20px",
                     borderRadius: "15px",
                     position: "relative",
                     paddingBottom: "40px"
@@ -71,7 +54,6 @@ const Home = () => {
                             <option>Qalqilya</option>
                             <option>Bethlehem</option>
                             <option>Jericho</option>
-
                         </Form.Select>
                     </Col>
 
@@ -110,6 +92,7 @@ const Home = () => {
 
                     <Col md={1}>
                         <Button
+                            onClick={handleSearch}
                             style={{
                                 width: "100%",
                                 backgroundColor: "#8b6b4f",
@@ -123,15 +106,27 @@ const Home = () => {
                 </Row>
             </Container>
 
-            <Container className="mt-5">
-                <h2 className="mb-4" style={{ fontWeight: "bold", color: "#5a3e2b" }}>
-                    Featured for you
-                </h2>
+            <Container className="mt-4">
+                <h5 style={{ fontWeight: "bold", color: "#5a3e2b" }}>
+                    Items Found: {results.length}
+                </h5>
+
+                <Row className="mt-3 g-3">
+                    {results.map((item) => (
+                        <Col md={4} key={item.id}>
+                            <Card>
+                                <Card.Body>
+                                    <Card.Title>{item.title}</Card.Title>
+                                    <Card.Text>${item.price}</Card.Text>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
             </Container>
 
-            <div style={{ height: "50px" }} />
         </div>
     );
 };
 
-export default Home;
+export default Search;

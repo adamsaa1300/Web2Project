@@ -4,8 +4,11 @@ import {
     Container,
     Nav,
     OverlayTrigger,
-    Tooltip
+    Tooltip,
+    Dropdown
 } from "react-bootstrap";
+
+import { useNavigate } from "react-router-dom";
 
 import logo from "../assets/logo.jpg";
 
@@ -20,57 +23,49 @@ import {
 } from "react-icons/ai";
 
 const Navbar = ({ userRole }) => {
+    const navigate = useNavigate();
 
     const iconStyle = {
         color: "#5a3e2b",
-        fontSize: "28px",
-        margin: "0 15px",
-        cursor: "pointer"
+        fontSize: "26px",
+        margin: "0 12px",
+        cursor: "pointer",
+        transition: "0.2s ease",
     };
 
     const handleClick = (page) => {
-        switch (page) {
-            case "home":
-                window.location.href = "/";
-                break;
-            case "login":
-                window.location.href = "/login";
-                break;
-            case "messages":
-                window.location.href = "/messages";
-                break;
-            case "addAd":
-                window.location.href = "/add-ad";
-                break;
-            case "admin":
-                window.location.href = "/admin";
-                break;
-            case "profile":
-                window.location.href = "/profile";
-                break;
-            default:
-                break;
-        }
+        if (page === "home") navigate("/");
+        if (page === "login") navigate("/login");
+        if (page === "messages") navigate("/messages");
+        if (page === "addAd") navigate("/add-ad");
+        if (page === "admin") navigate("/admin");
+        if (page === "profile") navigate("/profile");
     };
 
     const handleSearchClick = () => {
-        window.location.href = "/#search";
+        navigate("/search");
     };
 
-    const renderTooltip = (props, text) => (
+    const renderTooltip = (text) => (
         <Tooltip
-            {...props}
             style={{
                 backgroundColor: "#e6d3b3",
                 color: "#5a3e2b",
-                borderRadius: "12px",
-                padding: "6px 12px",
-                fontSize: "14px",
-                ...props.style
+                borderRadius: "8px",
+                padding: "6px 10px",
+                fontSize: "12px",
             }}
         >
             {text}
         </Tooltip>
+    );
+
+    const Icon = ({ icon, onClick, label }) => (
+        <OverlayTrigger placement="bottom" overlay={renderTooltip(label)}>
+            <span style={{ display: "inline-flex" }} onClick={onClick}>
+                {icon}
+            </span>
+        </OverlayTrigger>
     );
 
     return (
@@ -78,84 +73,99 @@ const Navbar = ({ userRole }) => {
             expand="lg"
             style={{
                 backgroundColor: "#f5e7d0",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                 padding: "0.5rem 1rem",
                 position: "fixed",
                 top: 0,
-                left: 0,
                 width: "100%",
                 zIndex: 1000
             }}
         >
             <Container>
-
                 <BSNavbar.Brand
                     href="/"
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px"
-                    }}
+                    style={{ display: "flex", alignItems: "center", gap: "10px" }}
                 >
                     <img
                         src={logo}
                         alt="Logo"
-                        style={{
-                            width: "40px",
-                            height: "40px",
-                            borderRadius: "8px",
-                            objectFit: "cover"
-                        }}
+                        style={{ width: "40px", height: "40px", borderRadius: "8px" }}
                     />
-                    <span
-                        style={{
-                            fontSize: "24px",
-                            fontWeight: "700",
-                            color: "#5a3e2b"
-                        }}
-                    >
+                    <span style={{ fontSize: "22px", fontWeight: "700", color: "#5a3e2b" }}>
                         Sawweq
                     </span>
                 </BSNavbar.Brand>
 
-                <BSNavbar.Toggle aria-controls="basic-navbar-nav" />
-
-                <BSNavbar.Collapse id="basic-navbar-nav">
+                <BSNavbar.Toggle />
+                <BSNavbar.Collapse>
                     <Nav className="ms-auto d-flex align-items-center">
 
-                        <OverlayTrigger placement="bottom" overlay={(props) => renderTooltip(props, "Home")}>
-                            <AiFillHome style={iconStyle} onClick={() => handleClick("home")} />
-                        </OverlayTrigger>
+                        <Icon
+                            icon={<AiFillHome style={iconStyle} />}
+                            onClick={() => handleClick("home")}
+                            label="Home"
+                        />
 
-                        <OverlayTrigger placement="bottom" overlay={(props) => renderTooltip(props, "Search")}>
-                            <AiOutlineSearch style={iconStyle} onClick={handleSearchClick} />
-                        </OverlayTrigger>
+                        <Icon
+                            icon={<AiOutlineSearch style={iconStyle} />}
+                            onClick={handleSearchClick}
+                            label="Search"
+                        />
 
-                        <OverlayTrigger placement="bottom" overlay={(props) => renderTooltip(props, "Messages")}>
-                            <AiOutlineMessage style={iconStyle} onClick={() => handleClick("messages")} />
-                        </OverlayTrigger>
+                        <Icon
+                            icon={<AiOutlineMessage style={iconStyle} />}
+                            onClick={() => handleClick("messages")}
+                            label="Messages"
+                        />
 
-                        <OverlayTrigger placement="bottom" overlay={(props) => renderTooltip(props, "Add Ad")}>
-                            <AiOutlinePlus style={iconStyle} onClick={() => handleClick("addAd")} />
-                        </OverlayTrigger>
+                        <Icon
+                            icon={<AiOutlinePlus style={iconStyle} />}
+                            onClick={() => handleClick("addAd")}
+                            label="Add Ad"
+                        />
 
                         {userRole === "admin" && (
-                            <OverlayTrigger placement="bottom" overlay={(props) => renderTooltip(props, "Admin Dashboard")}>
-                                <AiOutlineDashboard style={iconStyle} onClick={() => handleClick("admin")} />
-                            </OverlayTrigger>
+                            <Icon
+                                icon={<AiOutlineDashboard style={iconStyle} />}
+                                onClick={() => handleClick("admin")}
+                                label="Admin"
+                            />
                         )}
 
-                        <OverlayTrigger placement="bottom" overlay={(props) => renderTooltip(props, "Profile")}>
-                            <AiOutlineUser style={iconStyle} onClick={() => handleClick("profile")} />
-                        </OverlayTrigger>
+                        <Dropdown align="end">
+                            <Dropdown.Toggle as="div" style={{ cursor: "pointer" }}>
+                                <AiOutlineUser style={iconStyle} />
+                            </Dropdown.Toggle>
 
-                        <OverlayTrigger placement="bottom" overlay={(props) => renderTooltip(props, "Login")}>
-                            <AiOutlineLogin style={iconStyle} onClick={() => handleClick("login")} />
-                        </OverlayTrigger>
+                            <Dropdown.Menu
+                                style={{
+                                    borderRadius: "12px",
+                                    padding: "8px",
+                                    backgroundColor: "#f5e7d0",
+                                    border: "none",
+                                    boxShadow: "0 10px 25px rgba(0,0,0,0.2)"
+                                }}
+                            >
+                                <Dropdown.Item onClick={() => handleClick("profile")}>
+                                    My Profile
+                                </Dropdown.Item>
+
+                                {userRole === "admin" && (
+                                    <Dropdown.Item onClick={() => handleClick("admin")}>
+                                        Admin Dashboard
+                                    </Dropdown.Item>
+                                )}
+                            </Dropdown.Menu>
+                        </Dropdown>
+
+                        <Icon
+                            icon={<AiOutlineLogin style={iconStyle} />}
+                            onClick={() => handleClick("login")}
+                            label="Login"
+                        />
 
                     </Nav>
                 </BSNavbar.Collapse>
-
             </Container>
         </BSNavbar>
     );

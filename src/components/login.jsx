@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import { FcGoogle } from "react-icons/fc";
-import { FaApple } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -17,11 +15,20 @@ const Login = () => {
 
         let newErrors = {};
 
+        const validUser = {
+            email: "test@sawweq.com",
+            password: "1234",
+        };
+
         if (!email || !email.includes("@")) {
             newErrors.email = "Invalid email";
+        } else if (email !== validUser.email) {
+            newErrors.email = "Email not found";
         }
 
-        if (!password || password.length < 4) {
+        if (!password) {
+            newErrors.password = "Invalid password";
+        } else if (password !== validUser.password) {
             newErrors.password = "Wrong password";
         }
 
@@ -178,15 +185,6 @@ const Login = () => {
                     onClick={() => alert("Login with Google")}
                 >
                     <FcGoogle size={24} /> Continue with Google
-                </Button>
-
-                <Button
-                    style={buttonStyle}
-                    onMouseOver={buttonHover}
-                    onMouseOut={buttonLeave}
-                    onClick={() => alert("Login with Apple")}
-                >
-                    <FaApple size={22} /> Continue with Apple
                 </Button>
             </Card>
         </div>
