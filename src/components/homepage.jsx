@@ -1,10 +1,31 @@
-import React from "react";
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import React, { useState } from "react";
+import { Container, Row, Col, Button, Form, Card, Spinner } from "react-bootstrap";
 import homebg from "../assets/homebg.jpg";
 
 const Home = () => {
+    const [products, setProducts] = useState([]);
+    const [results, setResults] = useState([]);
+    const [hasSearched, setHasSearched] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const handleSearch = async () => {
+        setLoading(true);
+        setHasSearched(true);
+
+        try {
+            const res = await fetch("http://localhost:5000/api/products");
+            const data = await res.json();
+            setResults(data);
+        } catch (err) {
+            console.log(err);
+        }
+
+        setLoading(false);
+    };
+
     return (
         <div style={{ backgroundColor: "#f6f1eb", minHeight: "100vh" }}>
+
             <div
                 style={{
                     position: "relative",
@@ -17,16 +38,7 @@ const Home = () => {
                     justifyContent: "center",
                 }}
             >
-                <div
-                    style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: "rgba(0,0,0,0.5)",
-                    }}
-                />
+                <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.5)" }} />
 
                 <div style={{ position: "relative", textAlign: "center", color: "white" }}>
                     <h1 style={{ fontWeight: "bold" }}>Welcome to Sawweq</h1>
@@ -40,8 +52,9 @@ const Home = () => {
                     background: "white",
                     marginTop: "-50px",
                     borderRadius: "15px",
+                    paddingBottom: "40px",
                     position: "relative",
-                    paddingBottom: "40px"
+                    zIndex: 10
                 }}
             >
                 <Row className="g-2">
@@ -71,7 +84,6 @@ const Home = () => {
                             <option>Qalqilya</option>
                             <option>Bethlehem</option>
                             <option>Jericho</option>
-
                         </Form.Select>
                     </Col>
 
@@ -110,6 +122,7 @@ const Home = () => {
 
                     <Col md={1}>
                         <Button
+                            onClick={handleSearch}
                             style={{
                                 width: "100%",
                                 backgroundColor: "#8b6b4f",
@@ -123,10 +136,92 @@ const Home = () => {
                 </Row>
             </Container>
 
+            {hasSearched && (
+                <Container className="mt-5">
+                    <h2 style={{ fontWeight: "bold", color: "#5a3e2b" }}>
+                        Search Results
+                    </h2>
+
+                    {loading && (
+                        <div style={{ textAlign: "center" }}>
+                            <Spinner />
+                        </div>
+                    )}
+
+                    {!loading && results.length === 0 && (
+                        <div style={{ textAlign: "center", color: "#8b6b4f" }}>
+                            No items found
+                        </div>
+                    )}
+
+                    {!loading && results.length > 0 && (
+                        <Row className="g-4 mt-2">
+                            {results.map((item) => (
+                                <Col md={4} key={item._id}>
+                                    <Card style={{ borderRadius: "15px", overflow: "hidden" }}>
+                                        <img
+                                            src={item.image}
+                                            alt=""
+                                            style={{ height: "200px", width: "100%", objectFit: "cover" }}
+                                        />
+
+                                        <Card.Body>
+                                            <Card.Title>{item.title}</Card.Title>
+
+                                            <Card.Text style={{ color: "#777", fontSize: "14px" }}>
+                                                {item.description}
+                                            </Card.Text>
+
+                                            <h5 style={{ color: "#5a3e2b", fontWeight: "bold" }}>
+                                                ${item.price}
+                                            </h5>
+
+                                            <div style={{ fontSize: "13px", color: "#999" }}>
+                                                {item.user?.name} • {item.location}
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
+                            ))}
+                        </Row>
+                    )}
+                </Container>
+            )}
+
             <Container className="mt-5">
-                <h2 className="mb-4" style={{ fontWeight: "bold", color: "#5a3e2b" }}>
+                <h2 style={{ fontWeight: "bold", color: "#5a3e2b" }}>
                     Featured for you
                 </h2>
+
+                <Row className="g-4 mt-2">
+                    {products.map((item) => (
+                        <Col md={4} key={item._id}>
+                            <Card style={{ borderRadius: "15px", overflow: "hidden" }}>
+                                <img
+                                    src={item.image}
+                                    alt=""
+                                    style={{ height: "200px", width: "100%", objectFit: "cover" }}
+                                />
+
+                                <Card.Body>
+                                    <Card.Title>{item.title}</Card.Title>
+
+                                    <Card.Text style={{ color: "#777", fontSize: "14px" }}>
+                                        {item.description}
+                                    </Card.Text>
+
+                                    <h5 style={{ color: "#5a3e2b", fontWeight: "bold" }}>
+                                        ${item.price}
+                                    </h5>
+
+                                    <div style={{ fontSize: "13px", color: "#999" }}>
+                                        {item.user?.name} • {item.location}
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
             </Container>
 
             <div style={{ height: "50px" }} />

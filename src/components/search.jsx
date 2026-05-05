@@ -1,17 +1,24 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Button, Form, Card } from "react-bootstrap";
+import { Container, Row, Col, Button, Form, Card, Spinner } from "react-bootstrap";
 
 const Search = () => {
     const [results, setResults] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [hasSearched, setHasSearched] = useState(false);
 
-    const handleSearch = () => {
-        const fakeData = [
-            { id: 1, title: "Laptop Dell", price: 500 },
-            { id: 2, title: "Medical Lab Coat", price: 30 },
-            { id: 3, title: "Engineering Calculator", price: 20 },
-        ];
+    const handleSearch = async () => {
+        setLoading(true);
+        setHasSearched(true);
 
-        setResults(fakeData);
+        try {
+            const res = await fetch("http://localhost:5000/api/products");
+            const data = await res.json();
+            setResults(data);
+        } catch (err) {
+            console.log(err);
+        }
+
+        setLoading(false);
     };
 
     return (
@@ -23,7 +30,6 @@ const Search = () => {
                     background: "white",
                     marginTop: "20px",
                     borderRadius: "15px",
-                    position: "relative",
                     paddingBottom: "40px"
                 }}
             >
@@ -107,22 +113,53 @@ const Search = () => {
             </Container>
 
             <Container className="mt-4">
-                <h5 style={{ fontWeight: "bold", color: "#5a3e2b" }}>
-                    Items Found: {results.length}
-                </h5>
 
-                <Row className="mt-3 g-3">
-                    {results.map((item) => (
-                        <Col md={4} key={item.id}>
-                            <Card>
-                                <Card.Body>
-                                    <Card.Title>{item.title}</Card.Title>
-                                    <Card.Text>${item.price}</Card.Text>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    ))}
-                </Row>
+                {loading && (
+                    <div style={{ textAlign: "center", marginTop: "40px" }}>
+                        <Spinner />
+                    </div>
+                )}
+
+                {!loading && hasSearched && results.length === 0 && (
+                    <div style={{ textAlign: "center", color: "#8b6b4f", marginTop: "40px" }}>
+                        No items found
+                    </div>
+                )}
+
+                {!loading && results.length > 0 && (
+                    <Row className="g-4 mt-2">
+                        {results.map((item) => (
+                            <Col md={4} key={item._id}>
+                                <Card style={{ borderRadius: "15px", overflow: "hidden" }}>
+
+                                    <img
+                                        src={item.image}
+                                        alt=""
+                                        style={{ height: "200px", width: "100%", objectFit: "cover" }}
+                                    />
+
+                                    <Card.Body>
+                                        <Card.Title>{item.title}</Card.Title>
+
+                                        <Card.Text style={{ color: "#777", fontSize: "14px" }}>
+                                            {item.description}
+                                        </Card.Text>
+
+                                        <h5 style={{ color: "#5a3e2b", fontWeight: "bold" }}>
+                                            ${item.price}
+                                        </h5>
+
+                                        <div style={{ fontSize: "13px", color: "#999" }}>
+                                            {item.user?.name} • {item.location}
+                                        </div>
+                                    </Card.Body>
+
+                                </Card>
+                            </Col>
+                        ))}
+                    </Row>
+                )}
+
             </Container>
 
         </div>
