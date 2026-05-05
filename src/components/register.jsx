@@ -116,7 +116,23 @@ const Register = () => {
                         <Col md={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label>Location</Form.Label>
-                                <Form.Control name="location" value={form.location} onChange={handleChange} style={inputStyle(errors.location)} />
+                                <Form.Select
+                                    name="location"
+                                    value={form.location}
+                                    onChange={handleChange}
+                                    style={inputStyle(errors.location)}
+                                >
+                                    <option value="">Select location</option>
+                                    <option>Nablus</option>
+                                    <option>Ramallah</option>
+                                    <option>Hebron</option>
+                                    <option>Jerusalem</option>
+                                    <option>Jenin</option>
+                                    <option>Tulkarm</option>
+                                    <option>Qalqilya</option>
+                                    <option>Bethlehem</option>
+                                    <option>Jericho</option>
+                                </Form.Select>
                                 {errors.location && <div style={{ color: "#b04a4a" }}>{errors.location}</div>}
                             </Form.Group>
                         </Col>
@@ -124,7 +140,18 @@ const Register = () => {
 
                     <Form.Group className="mb-3">
                         <Form.Label>University</Form.Label>
-                        <Form.Control name="university" value={form.university} onChange={handleChange} style={inputStyle(errors.university)} />
+                        <Form.Select
+                            name="university"
+                            value={form.university}
+                            onChange={handleChange}
+                            style={inputStyle(errors.university)}
+                        >
+                            <option value="">Select university</option>
+                            <option>Palestine University</option>
+                            <option>An-Najah National University</option>
+                            <option>Birzeit University</option>
+                            <option>Palestine Technical University (Kadoorie)</option>
+                        </Form.Select>
                         {errors.university && <div style={{ color: "#b04a4a" }}>{errors.university}</div>}
                     </Form.Group>
 
