@@ -1,15 +1,21 @@
 import React, { useState } from "react";
-import { Form, Button, Card } from "react-bootstrap";
+import { Form, Button, Card, Row, Col } from "react-bootstrap";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 const Register = () => {
     const [form, setForm] = useState({
+        name: "",
         email: "",
         birthDate: "",
         location: "",
+        university: "",
         password: "",
+        confirmPassword: ""
     });
 
     const [errors, setErrors] = useState({});
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const handleChange = (e) => {
         setForm({
@@ -28,25 +34,38 @@ const Register = () => {
 
         let newErrors = {};
 
-        if (!form.email || !form.email.includes("@")) {
-            newErrors.email = "Invalid email";
+        if (!form.name || form.name.length < 2) {
+            newErrors.name = "Name must be at least 2 characters";
         }
 
         if (!form.birthDate) {
-            newErrors.birthDate = "Birth date is required";
+            newErrors.birthDate = "Required";
         }
 
         if (!form.location) {
-            newErrors.location = "Location is required";
+            newErrors.location = "Required";
         }
 
-        if (!form.password || form.password.length < 4) {
-            newErrors.password = "Password must be at least 4 characters";
+        if (!form.university) {
+            newErrors.university = "Required";
+        }
+
+        if (!form.email || !/\S+@\S+\.\S+/.test(form.email)) {
+            newErrors.email = "Invalid email";
+        }
+
+        if (!form.password || form.password.length < 6) {
+            newErrors.password = "Password must be at least 6 characters";
+        }
+
+        if (form.password !== form.confirmPassword) {
+            newErrors.confirmPassword = "Passwords do not match";
         }
 
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
+            console.log(form);
             alert("Register successful");
         }
     };
@@ -71,104 +90,109 @@ const Register = () => {
     };
 
     return (
-        <div
-            style={{
-                minHeight: "100vh",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#fdf5ec",
-                fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-            }}
-        >
-            <Card
-                style={{
-                    width: "480px",
-                    padding: "35px",
-                    borderRadius: "20px",
-                    boxShadow: "0 12px 30px rgba(0,0,0,0.35)",
-                    backgroundColor: "#f5e7d0",
-                }}
-            >
-                <h2
-                    style={{
-                        textAlign: "center",
-                        color: "#5a3e2b",
-                        marginBottom: "25px",
-                        fontWeight: "700",
-                        fontSize: "28px",
-                    }}
-                >
+        <div style={{ minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "#fdf5ec" }}>
+            <Card style={{ width: "520px", padding: "35px", borderRadius: "20px", boxShadow: "0 12px 30px rgba(0,0,0,0.35)", backgroundColor: "#f5e7d0" }}>
+                <h2 style={{ textAlign: "center", marginBottom: "25px" }}>
                     Register
                 </h2>
 
                 <Form onSubmit={handleSubmit} noValidate>
 
-                    {/* EMAIL */}
+                    <Form.Group className="mb-3">
+                        <Form.Label>Name</Form.Label>
+                        <Form.Control name="name" value={form.name} onChange={handleChange} style={inputStyle(errors.name)} />
+                        {errors.name && <div style={{ color: "#b04a4a" }}>{errors.name}</div>}
+                    </Form.Group>
+
+                    <Row>
+                        <Col md={6}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Birth Date</Form.Label>
+                                <Form.Control type="date" name="birthDate" value={form.birthDate} onChange={handleChange} style={inputStyle(errors.birthDate)} />
+                                {errors.birthDate && <div style={{ color: "#b04a4a" }}>{errors.birthDate}</div>}
+                            </Form.Group>
+                        </Col>
+
+                        <Col md={6}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Location</Form.Label>
+                                <Form.Control name="location" value={form.location} onChange={handleChange} style={inputStyle(errors.location)} />
+                                {errors.location && <div style={{ color: "#b04a4a" }}>{errors.location}</div>}
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    <Form.Group className="mb-3">
+                        <Form.Label>University</Form.Label>
+                        <Form.Control name="university" value={form.university} onChange={handleChange} style={inputStyle(errors.university)} />
+                        {errors.university && <div style={{ color: "#b04a4a" }}>{errors.university}</div>}
+                    </Form.Group>
+
                     <Form.Group className="mb-3">
                         <Form.Label>Email</Form.Label>
-                        <Form.Control
-                            name="email"
-                            value={form.email}
-                            onChange={handleChange}
-                            style={inputStyle(errors.email)}
-                        />
-                        {errors.email && (
-                            <div style={{ color: "#b04a4a", fontSize: "13px" }}>
-                                {errors.email}
-                            </div>
-                        )}
+                        <Form.Control name="email" value={form.email} onChange={handleChange} style={inputStyle(errors.email)} />
+                        {errors.email && <div style={{ color: "#b04a4a" }}>{errors.email}</div>}
                     </Form.Group>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label>Birth Date</Form.Label>
-                        <Form.Control
-                            type="date"
-                            name="birthDate"
-                            value={form.birthDate}
-                            onChange={handleChange}
-                            style={inputStyle(errors.birthDate)}
-                        />
-                        {errors.birthDate && (
-                            <div style={{ color: "#b04a4a", fontSize: "13px" }}>
-                                {errors.birthDate}
-                            </div>
-                        )}
-                    </Form.Group>
+                    <Row>
+                        <Col md={6}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Password</Form.Label>
+                                <div style={{ position: "relative" }}>
+                                    <Form.Control
+                                        type={showPassword ? "text" : "password"}
+                                        name="password"
+                                        value={form.password}
+                                        onChange={handleChange}
+                                        style={inputStyle(errors.password)}
+                                    />
+                                    <span
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        style={{
+                                            position: "absolute",
+                                            right: "15px",
+                                            top: "50%",
+                                            transform: "translateY(-50%)",
+                                            cursor: "pointer",
+                                            color: "#5a3e2b"
+                                        }}
+                                    >
+                                        {showPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
+                                    </span>
+                                </div>
+                                {errors.password && <div style={{ color: "#b04a4a" }}>{errors.password}</div>}
+                            </Form.Group>
+                        </Col>
 
-
-                    <Form.Group className="mb-3">
-                        <Form.Label>Location</Form.Label>
-                        <Form.Control
-                            name="location"
-                            value={form.location}
-                            onChange={handleChange}
-                            style={inputStyle(errors.location)}
-                        />
-                        {errors.location && (
-                            <div style={{ color: "#b04a4a", fontSize: "13px" }}>
-                                {errors.location}
-                            </div>
-                        )}
-                    </Form.Group>
-
-
-                    <Form.Group className="mb-3">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control
-                            type="password"
-                            name="password"
-                            value={form.password}
-                            onChange={handleChange}
-                            style={inputStyle(errors.password)}
-                        />
-                        {errors.password && (
-                            <div style={{ color: "#b04a4a", fontSize: "13px" }}>
-                                {errors.password}
-                            </div>
-                        )}
-                    </Form.Group>
-
+                        <Col md={6}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Confirm Password</Form.Label>
+                                <div style={{ position: "relative" }}>
+                                    <Form.Control
+                                        type={showConfirm ? "text" : "password"}
+                                        name="confirmPassword"
+                                        value={form.confirmPassword}
+                                        onChange={handleChange}
+                                        style={inputStyle(errors.confirmPassword)}
+                                    />
+                                    <span
+                                        onClick={() => setShowConfirm(!showConfirm)}
+                                        style={{
+                                            position: "absolute",
+                                            right: "15px",
+                                            top: "50%",
+                                            transform: "translateY(-50%)",
+                                            cursor: "pointer",
+                                            color: "#5a3e2b"
+                                        }}
+                                    >
+                                        {showConfirm ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
+                                    </span>
+                                </div>
+                                {errors.confirmPassword && <div style={{ color: "#b04a4a" }}>{errors.confirmPassword}</div>}
+                            </Form.Group>
+                        </Col>
+                    </Row>
 
                     <Button type="submit" style={buttonStyle}>
                         Submit
