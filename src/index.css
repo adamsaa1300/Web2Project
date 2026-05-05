@@ -1,0 +1,155 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #080916;
+  font-family: "Cairo", "Inter", sans-serif;
+}
+
+.navbar-custom {
+  background: #0b0a18;
+  padding: 2rem 1rem;
+}
+
+.nav-link-custom {
+  border: none;
+  background: transparent;
+  color: #484659;
+  padding: 0.7rem 1rem;
+  border-radius: 4px;
+  font-size: 1.2rem;
+}
+
+.nav-link-custom:hover,
+.nav-link-custom.active {
+  background: #fc3b6b;
+  color: white;
+}
+
+.chat-page {
+  height: calc(100vh - 104px);
+  background: #080916;
+}
+
+.sidebar {
+  background: #0f1025;
+  color: white;
+  min-height: calc(100vh - 104px);
+}
+
+.search-input {
+  background: #1b1b35;
+  border: 1px solid #252545;
+  color: white;
+  text-align: right;
+}
+
+.search-input::placeholder {
+  color: #777891;
+}
+
+.search-input:focus {
+  background: #1b1b35;
+  color: white;
+  box-shadow: none;
+  border-color: #fc3b6b;
+}
+
+.chat-item {
+  height: 65px;
+  border-radius: 14px;
+  color: white;
+  background: transparent;
+}
+
+.chat-item:hover {
+  background: #1b1b35;
+  color: white;
+}
+
+.active-chat {
+  background: linear-gradient(90deg, #2a1030, #45163a) !important;
+  color: white !important;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: white;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.chat-item p {
+  color: #aaaabd;
+}
+
+.chat-window {
+  background: #080916;
+  color: white;
+  min-height: calc(100vh - 104px);
+}
+
+.chat-header {
+  height: 70px;
+  background: #111229;
+  border-bottom: 1px solid #1f2040;
+}
+
+.messages-area {
+  overflow-y: auto;
+}
+
+.message {
+  max-width: 55%;
+  padding: 12px 15px;
+  border-radius: 14px;
+}
+
+.message span {
+  color: #aaaabd;
+}
+
+.his-message {
+  background: #1b1b35;
+  margin-left: auto;
+}
+
+.my-message {
+  background: #7357ff;
+  margin-right: auto;
+}
+
+.message-input {
+  background: #111229;
+  border-top: 1px solid #1f2040;
+}
+
+.message-input input {
+  background: #1b1b35;
+  border: none;
+  color: white;
+  text-align: right;
+}
+
+.message-input input:focus {
+  background: #1b1b35;
+  color: white;
+  box-shadow: none;
+}
+
+.send-btn {
+  background: #fc3b6b;
+  color: white;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+}
+
+.send-btn:hover {
+  background: #ff5a82;
+  color: white;
+}
