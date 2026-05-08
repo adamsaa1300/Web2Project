@@ -40,7 +40,7 @@ export default function DashboardPage() {
                             borderRadius: theme.borderRadius.lg,
                         }}>
                             <Card.Body>
-                                <div style={{ fontSize: '20px', marginBottom: '8px'}}>{card.icon}</div>
+                                <div style={{ fontSize: '20px', marginBottom: '8px', color: card.color}}>{card.icon}</div>
                                 <h3 style={{ color: card.color, margin: 0}}>{card.value}</h3>
                                 <small style={{ color: theme.textMuted }}>{card.title}</small>
                             </Card.Body>
@@ -75,7 +75,8 @@ export default function DashboardPage() {
                                         <div style={{ fontSize: '12px', fontWeight: '500', color: theme.textPrimary }}>{u.name}</div>
                                         <div style={{ fontSize: '11px', color: theme.textMuted }}>{u.uni}</div>
                                     </div>
-                                    <Badge bg={u.status === 'active' ? 'success' : u.status === 'suspended' ? 'warning' : 'danger'}>
+                                    <Badge bg={u.status === 'active' ? 'success' : u.status === 'suspended' ? 'warning' : 'danger'}
+                                        style={{ alignSelf: 'center' }}>
                                         {u.status}
                                     </Badge>
                                 </div>
