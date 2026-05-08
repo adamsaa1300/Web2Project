@@ -1,16 +1,32 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import AdminDashboard from "./components/admin/AdminDashboard"
-import Navbar from './components/navbar'
+import React from "react";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/navbar.jsx";
+import Login from "./components/login.jsx";
+import Register from "./components/register.jsx";
+import Home from "./components/homepage.jsx";
+import Search from "./components/search.jsx";
+import AdminDashboard from "./components/admin/AdminDashboard";
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Navbar userRole="admin" />
-      <Routes>
-        <Route path='/admin'     element={<AdminDashboard />} />
-      </Routes>
-    </BrowserRouter>
-  )
+    return (
+        <div
+            style={{ fontFamily: 'Arial, sans-serif',backgroundColor: '#fdf5ec',minHeight: '100vh' }}>
+            <Navbar />
+            <div style={{ marginTop: "65px" }}>
+                <div className="container text-center mt-4">
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/home" element={<Home />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/search" element={<Search />} />
+                        <Route path="/admin" element={<AdminDashboard />} />
+                    </Routes>
+                </div>
+            </div>
+        </div>
+    );
 }
 
-export default App
+export default App;
