@@ -9,6 +9,7 @@ import Register from "./components/register.jsx";
 import Home from "./components/homepage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import Search from "./components/search.jsx";
+import CreateAd from "./components/CreateAd.jsx";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/add-ad" element={<CreateAd />} />
         </Routes>
       </div>
     </div>
