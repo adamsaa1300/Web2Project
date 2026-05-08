@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Form, Button, Card, Row, Col } from "react-bootstrap";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
     const [form, setForm] = useState({
@@ -16,7 +18,7 @@ const Register = () => {
     const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
-
+    const navigate = useNavigate();
     const handleChange = (e) => {
         setForm({
             ...form,
@@ -29,7 +31,7 @@ const Register = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit =async (e) => {
         e.preventDefault();
 
         let newErrors = {};
@@ -65,8 +67,36 @@ const Register = () => {
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
-            console.log(form);
-            alert("Register successful");
+
+            try {
+
+                const response = await axios.post(
+                    "http://localhost:5000/api/users",
+                    {
+                        name: form.name,
+                        birthDate: form.birthDate,
+                        location: form.location,
+                        uni: form.university,
+                        email: form.email,
+                        password: form.password
+                    }
+                );
+
+                console.log(response.data);
+
+                navigate("/home");
+
+            } catch (err) {
+
+                console.log(err);
+
+                alert(
+                    err.response?.data?.error ||
+                    "Something went wrong"
+                );
+
+            }
+
         }
     };
 
