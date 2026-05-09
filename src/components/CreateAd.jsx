@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; 
 import Navbar from "./navbar";
@@ -18,7 +18,15 @@ import {
 function CreateAd({ userRole }) {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  useEffect(() => {
 
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+    }
+
+  }, []);
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -121,8 +129,20 @@ const handleSubmit = async (e) => {
     });
 
     try {
-      const apiUrl = "http://localhost:5000/api/create-ads";
-      const response = await axios.post(apiUrl, data);
+      const apiUrl = "http://localhost:5000/api/products";
+      const response = await axios.post(
+
+          apiUrl,
+
+          data,
+
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          }
+
+      );
 
       if (response.status === 201 || response.status === 200) {
         alert("Listing Added Successfully! 🎉");

@@ -1,11 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Button, Form, Card, Spinner } from "react-bootstrap";
-
+import { useNavigate } from "react-router-dom";
 const Search = () => {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
+    const navigate = useNavigate();
+    useEffect(() => {//redirect to log in if not logged
 
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            navigate("/login");
+        }
+
+    }, []);
     const handleSearch = async () => {
         setLoading(true);
         setHasSearched(true);

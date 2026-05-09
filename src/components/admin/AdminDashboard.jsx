@@ -23,7 +23,7 @@ export default function AdminDashboard() {
     }
 
     return (
-        <div style={{ display: 'flex', height: '100vh', width: '100%', paddingTop: '60px' }}>
+        <div style={{ display: 'flex', minHeight: '100vh', width: '100%', paddingTop: '60px' }}>
 
             <div style={{ width: '250px', flexShrink: 0}}>
                 <Sidebar activePage={activePage} setActivePage={setActivePage} />

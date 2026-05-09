@@ -22,9 +22,10 @@ import {
     AiOutlineDashboard
 } from "react-icons/ai";
 
-const Navbar = ({ userRole }) => {
+const Navbar = () => {
     const navigate = useNavigate();
-
+    const user = JSON.parse(localStorage.getItem("user"));
+    console.log(user)
     const iconStyle = {
         color: "#5a3e2b",
         fontSize: "26px",
@@ -45,7 +46,15 @@ const Navbar = ({ userRole }) => {
     const handleSearchClick = () => {
         navigate("/search");
     };
+    const handleLogout = () => {
 
+        localStorage.removeItem("token");
+
+        localStorage.removeItem("user");
+
+        navigate("/login");
+
+    }
     const renderTooltip = (text) => (
         <Tooltip
             style={{
@@ -124,13 +133,7 @@ const Navbar = ({ userRole }) => {
                             label="Add Ad"
                         />
 
-                        {userRole === "admin" && (
-                            <Icon
-                                icon={<AiOutlineDashboard style={iconStyle} />}
-                                onClick={() => handleClick("admin")}
-                                label="Admin"
-                            />
-                        )}
+
 
                         <Dropdown align="end">
                             <Dropdown.Toggle as="div" style={{ cursor: "pointer" }}>
@@ -150,11 +153,15 @@ const Navbar = ({ userRole }) => {
                                     My Profile
                                 </Dropdown.Item>
 
-                                {userRole === "admin" && (
+                                {user?.role === "admin" && (
                                     <Dropdown.Item onClick={() => handleClick("admin")}>
                                         Admin Dashboard
                                     </Dropdown.Item>
                                 )}
+
+                                <Dropdown.Item onClick={handleLogout}>
+                                    LogOut
+                                </Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
 
