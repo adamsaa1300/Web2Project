@@ -10,26 +10,13 @@ import ProfilePage from "./pages/ProfilePage.jsx";
 import Search from "./components/search.jsx";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import CreateAd from "./components/CreateAd.jsx";
-
 function App() {
-
     return (
-
-        <div
-            style={{
-                fontFamily: 'Arial, sans-serif',
-                backgroundColor: '#fdf5ec',
-                minHeight: '100vh'
-            }}
-        >
-
+        <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#fdf5ec', minHeight: '100vh' }}>
             <Navbar />
-
             <div style={{ marginTop: "65px" }}>
-
-
+                <div className=" text-center mt-4">
                     <Routes>
-
                         <Route path="/" element={<Home />} />
 
                         <Route path="/home" element={<Home />} />
@@ -45,17 +32,12 @@ function App() {
                         <Route path="/admin" element={<AdminDashboard />} />
 
                         <Route path="/add-ad" element={<CreateAd />} />
-
                     </Routes>
-
-
-
+                </div>
             </div>
 
         </div>
-
     );
-
 }
 
 export default App;

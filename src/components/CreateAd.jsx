@@ -136,7 +136,7 @@ const handleSubmit = async (e) => {
 
   return (
     <div style={{ backgroundColor: Colors.bg, minHeight: "100vh" }}>
-      <Navbar userRole={userRole} />
+
 
       <form className="container pb-5" style={{ paddingTop: "100px" }} onSubmit={handleSubmit}>
         <div className="mb-4">
