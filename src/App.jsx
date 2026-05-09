@@ -27,7 +27,6 @@ function App() {
 
             <div style={{ marginTop: "65px" }}>
 
-                <div className="container text-center mt-4">
 
                     <Routes>
 
@@ -49,7 +48,7 @@ function App() {
 
                     </Routes>
 
-                </div>
+
 
             </div>
 
