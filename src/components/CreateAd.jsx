@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; 
 import Navbar from "./navbar";
@@ -30,6 +30,7 @@ function CreateAd({ userRole }) {
     description: "",
     isNegotiable: false
   });
+  const [isAiLoading, setIsAiLoading] = useState(false);
 
   const [selectedImages, setSelectedImages] = useState([]);
   const MAX_IMAGES = 8;
@@ -68,6 +69,36 @@ function CreateAd({ userRole }) {
     "Arts", 
     "Pharmacy"
   ];
+  const handleAiImprove = async () => {
+    if (!formData.description) {
+      alert("Please write a short description first!");
+      return;
+    }
+    try {
+      setIsAiLoading(true);
+      const response = await axios.post(
+        'http://localhost:5000/api/ai/improve-description', 
+        { description: formData.description },
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+          }
+        }
+      );
+      
+      if (response.data && response.data.improvedDescription) {
+        setFormData(prev => ({
+          ...prev,
+          description: response.data.improvedDescription
+        }));
+      }
+    } catch (error) {
+      console.error("AI Error:", error);
+      alert("AI service is currently unavailable.");
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -96,7 +127,7 @@ function CreateAd({ userRole }) {
   const removeImage = (index) => {
     setSelectedImages((prev) => prev.filter((_, i) => i !== index));
   };
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (selectedImages.length === 0) {
@@ -105,12 +136,13 @@ const handleSubmit = async (e) => {
     }
 
     const data = new FormData();
-    data.append("user", "Anonymous"); 
+    const currentUserId = sessionStorage.getItem("userId") || "Sama_Test_User"; 
+    data.append("user", currentUserId); 
     data.append("title", formData.title);
     data.append("category", formData.category);
     data.append("location", formData.location);
     data.append("university", formData.university); 
-    data.append("college", formData.college);       
+    data.append("college", formData.college);        
     data.append("price", Number(formData.price) || 0);
     data.append("condition", formData.condition);
     data.append("description", formData.description);
@@ -121,8 +153,12 @@ const handleSubmit = async (e) => {
     });
 
     try {
-      const apiUrl = "http://localhost:5000/api/create-ads";
-      const response = await axios.post(apiUrl, data);
+      const apiUrl = "http://localhost:5000/api/ads"; 
+      const response = await axios.post(apiUrl, data, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`
+        }
+      });
 
       if (response.status === 201 || response.status === 200) {
         alert("Listing Added Successfully! 🎉");
@@ -189,11 +225,15 @@ const handleSubmit = async (e) => {
                   <label className="form-label small fw-bold">Category *</label>
                   <select name="category" value={formData.category} onChange={handleChange} required className="form-select border-0 shadow-sm" style={{ backgroundColor: "#fcf9f5" }}>
                     <option value="">Select Category</option>
-                    <option value="motors">Cars & Motors</option>
-                    <option value="electronics">Electronics</option>
-                    <option value="fashion">Fashion & Clothing</option>
-                    <option value="home">Home & Garden</option>
-                    <option value="realestate">Real Estate</option>
+                    <option>All Categories</option>
+                    <option>Slides</option>
+                    <option>Books</option>
+                    <option>Calculators</option>
+                    <option>Laptops</option>
+                    <option>Lab Coats</option>
+                    <option>Colors</option>
+                    <option>Bags</option>
+                    <option>Others</option>
                   </select>
                 </div>
 
@@ -201,9 +241,15 @@ const handleSubmit = async (e) => {
                   <label className="form-label small fw-bold">Location *</label>
                   <select name="location" value={formData.location} onChange={handleChange} required className="form-select border-0 shadow-sm" style={{ backgroundColor: "#fcf9f5" }}>
                     <option value="">Select City</option>
-                    {palestineCities.map(city => (
-                      <option key={city} value={city.toLowerCase()}>{city}</option>
-                    ))}
+                    <option>Nablus</option>
+                    <option>Ramallah</option>
+                    <option>Hebron</option>
+                    <option>Jerusalem</option>
+                    <option>Jenin</option>
+                    <option>Tulkarm</option>
+                    <option>Qalqilya</option>
+                    <option>Bethlehem</option>
+                    <option>Jericho</option>
                   </select>
                 </div>
                 <div className="col-md-6">
@@ -250,8 +296,34 @@ const handleSubmit = async (e) => {
                 </div>
 
                 <div className="col-md-12">
-                  <label className="form-label small fw-bold">Description *</label>
-                  <textarea name="description" value={formData.description} onChange={handleChange} required className="form-control border-0 p-2 shadow-sm" style={{ backgroundColor: "#fcf9f5" }} rows="4" placeholder="Tell us more about the item..."></textarea>
+                  <div className="d-flex justify-content-between align-items-center mb-1">
+                    <label className="form-label small fw-bold mb-0">Description *</label>
+                    <button 
+                      type="button" 
+                      onClick={handleAiImprove} 
+                      disabled={isAiLoading} 
+                      style={{ 
+                        border: "none", 
+                        background: "none", 
+                        color: Colors.accent, 
+                        fontSize: "12px", 
+                        fontWeight: "bold", 
+                        cursor: isAiLoading ? "not-allowed" : "pointer" 
+                      }}
+                    >
+                      {isAiLoading ? "Processing..." : "✨ Improve with AI"}
+                    </button>
+                  </div>
+                  <textarea 
+                    name="description" 
+                    value={formData.description} 
+                    onChange={handleChange} 
+                    required 
+                    className="form-control border-0 p-2 shadow-sm" 
+                    style={{ backgroundColor: "#fcf9f5" }} 
+                    rows="4" 
+                    placeholder="Tell us more about the item..."
+                  ></textarea>
                 </div>
               </div>
             </div>
@@ -287,4 +359,3 @@ const handleSubmit = async (e) => {
 }
 
 export default CreateAd;
-
