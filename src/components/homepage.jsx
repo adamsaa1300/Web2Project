@@ -1,13 +1,23 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Button, Form, Card, Spinner } from "react-bootstrap";
 import homebg from "../assets/homebg.jpg";
-
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 const Home = () => {
     const [products, setProducts] = useState([]);
     const [results, setResults] = useState([]);
     const [hasSearched, setHasSearched] = useState(false);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    useEffect(() => {
 
+        const token = sessionStorage.getItem("token");
+
+        if (!token) {
+            navigate("/login");//redirect to log in if not logged
+        }
+
+    }, []);
     const handleSearch = async () => {
         setLoading(true);
         setHasSearched(true);
@@ -69,6 +79,7 @@ const Home = () => {
                             <option>Lab Coats</option>
                             <option>Colors</option>
                             <option>Bags</option>
+                            <option>Others</option>
                         </Form.Select>
                     </Col>
 

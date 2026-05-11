@@ -3,13 +3,14 @@ import { Form, Button, Card, Row, Col } from "react-bootstrap";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { useEffect } from "react";
 const Register = () => {
     const [form, setForm] = useState({
         name: "",
         email: "",
         birthDate: "",
         location: "",
+        faculty: "",
         university: "",
         password: "",
         confirmPassword: ""
@@ -19,6 +20,15 @@ const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const navigate = useNavigate();
+    useEffect(() => {
+
+        const token = sessionStorage.getItem("token");
+
+        if (token) {
+            navigate("/home");
+        }
+
+    }, []);
     const handleChange = (e) => {
         setForm({
             ...form,
@@ -47,15 +57,16 @@ const Register = () => {
         if (!form.location) {
             newErrors.location = "Required";
         }
-
+        if (!form.faculty) {
+            newErrors.faculty = "Required";
+        }
         if (!form.university) {
             newErrors.university = "Required";
         }
 
-        if (!form.email || !/\S+@\S+\.\S+/.test(form.email)) {
-            newErrors.email = "Invalid email";
+        if (!form.email) {
+            newErrors.email = "Username required";
         }
-
         if (!form.password || form.password.length < 6) {
             newErrors.password = "Password must be at least 6 characters";
         }
@@ -76,13 +87,22 @@ const Register = () => {
                         name: form.name,
                         birthDate: form.birthDate,
                         location: form.location,
+                        faculty: form.faculty,
                         uni: form.university,
-                        email: form.email,
+                        email: `${form.email}@sawweq.com`,
                         password: form.password
                     }
                 );
 
-                console.log(response.data);
+                sessionStorage.setItem(
+                    "token",
+                    response.data.token
+                );
+
+                sessionStorage.setItem(
+                    "user",
+                    JSON.stringify(response.data.user)
+                );
 
                 navigate("/home");
 
@@ -167,7 +187,33 @@ const Register = () => {
                             </Form.Group>
                         </Col>
                     </Row>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Faculty</Form.Label>
 
+                        <Form.Select
+                            name="faculty"
+                            value={form.faculty}
+                            onChange={handleChange}
+                            style={inputStyle(errors.faculty)}
+                        >
+                            <option value="">Select faculty</option>
+
+                            <option>Medicine</option>
+                            <option>Engineering</option>
+                            <option>IT / Technology</option>
+                            <option>Law</option>
+                            <option>Business</option>
+                            <option>Arts</option>
+                            <option>Pharmacy</option>
+
+                        </Form.Select>
+
+                        {errors.faculty && (
+                            <div style={{ color: "#b04a4a" }}>
+                                {errors.faculty}
+                            </div>
+                        )}
+                    </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>University</Form.Label>
                         <Form.Select
@@ -186,9 +232,48 @@ const Register = () => {
                     </Form.Group>
 
                     <Form.Group className="mb-3">
+
                         <Form.Label>Email</Form.Label>
-                        <Form.Control name="email" value={form.email} onChange={handleChange} style={inputStyle(errors.email)} />
-                        {errors.email && <div style={{ color: "#b04a4a" }}>{errors.email}</div>}
+
+                        <div style={{ display: "flex" }}>
+
+                            <Form.Control
+                                name="email"
+                                placeholder="Enter username"
+                                value={form.email}
+                                onChange={handleChange}
+                                style={{
+                                    ...inputStyle(errors.email),
+                                    borderTopRightRadius: "0",
+                                    borderBottomRightRadius: "0"
+                                }}
+                            />
+
+                            <div
+                                style={{
+                                    backgroundColor: "#e6d3b3",
+                                    padding: "12px",
+                                    border: "1px solid #e6d3b3",
+                                    borderLeft: "none",
+                                    borderTopRightRadius: "12px",
+                                    borderBottomRightRadius: "12px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    color: "#5a3e2b",
+                                    fontWeight: "600"
+                                }}
+                            >
+                                @sawweq.com
+                            </div>
+
+                        </div>
+
+                        {errors.email && (
+                            <div style={{ color: "#b04a4a" }}>
+                                {errors.email}
+                            </div>
+                        )}
+
                     </Form.Group>
 
                     <Row>

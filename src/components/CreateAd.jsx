@@ -18,7 +18,15 @@ import {
 function CreateAd({ userRole }) {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  useEffect(() => {
 
+    const token = sessionStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+    }
+
+  }, []);
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -172,7 +180,7 @@ function CreateAd({ userRole }) {
 
   return (
     <div style={{ backgroundColor: Colors.bg, minHeight: "100vh" }}>
-      <Navbar userRole={userRole} />
+
 
       <form className="container pb-5" style={{ paddingTop: "100px" }} onSubmit={handleSubmit}>
         <div className="mb-4">
