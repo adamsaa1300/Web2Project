@@ -24,7 +24,8 @@ import {
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    const token = sessionStorage.getItem("token");
     console.log(user)
     const iconStyle = {
         color: "#5a3e2b",
@@ -48,9 +49,9 @@ const Navbar = () => {
     };
     const handleLogout = () => {
 
-        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
 
-        localStorage.removeItem("user");
+        sessionStorage.removeItem("user");
 
         navigate("/login");
 
@@ -135,7 +136,7 @@ const Navbar = () => {
 
 
 
-                        <Dropdown align="end">
+                        {token && (<Dropdown align="end">
                             <Dropdown.Toggle as="div" style={{ cursor: "pointer" }}>
                                 <AiOutlineUser style={iconStyle} />
                             </Dropdown.Toggle>
@@ -163,14 +164,15 @@ const Navbar = () => {
                                     LogOut
                                 </Dropdown.Item>
                             </Dropdown.Menu>
-                        </Dropdown>
+                        </Dropdown>)}
 
-                        <Icon
-                            icon={<AiOutlineLogin style={iconStyle} />}
-                            onClick={() => handleClick("login")}
-                            label="Login"
-                        />
-
+                        {!token && (
+                            <Icon
+                                icon={<AiOutlineLogin style={iconStyle} />}
+                                onClick={() => handleClick("login")}
+                                label="Login"
+                            />
+                        )}
                     </Nav>
                 </BSNavbar.Collapse>
             </Container>

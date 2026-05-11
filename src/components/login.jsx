@@ -3,9 +3,27 @@ import { Form, Button, Card } from "react-bootstrap";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useEffect } from "react";
+import {
+    signInWithPopup
+} from "firebase/auth";
+
+import {
+    auth,
+    provider
+} from "../firebase";
+
 const Login = () => {
     const navigate = useNavigate();
+    useEffect(() => {
 
+        const token = sessionStorage.getItem("token");
+
+        if (token) {
+            navigate("/home");
+        }
+
+    }, []);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState({});
@@ -15,10 +33,19 @@ const Login = () => {
 
         let newErrors = {};
 
-        if (!email || !email.includes("@")) {
-            newErrors.email = "Invalid email";
-        }
+        if (!email) {
 
+            newErrors.email = "Email required";
+
+        }
+        else if (
+            !email.endsWith("@sawweq.com") &&
+            !email.endsWith("@sawweq.admin.com")
+        ) {
+
+            newErrors.email = "Invalid email";
+
+        }
         if (!password) {
             newErrors.password = "Password required";
         }
@@ -37,12 +64,12 @@ const Login = () => {
                     }
                 );
 
-                localStorage.setItem(
+                sessionStorage.setItem(
                     "token",
                     response.data.token
                 );
 
-                localStorage.setItem(
+                sessionStorage.setItem(
                     "user",
                     JSON.stringify(response.data.user)
                 );
@@ -52,14 +79,50 @@ const Login = () => {
             } catch (err) {
 
                 setErrors({
-                    email: err.response?.data?.error || "Login failed"
+                    [err.response?.data?.field]:
+                        err.response?.data?.error || "Login failed"
                 });
 
             }
 
         }
     };
+    const handleGoogleLogin = async () => {
 
+        try {
+
+            const result = await signInWithPopup(
+                auth,
+                provider
+            );
+
+            const googleUser = result.user;
+
+            sessionStorage.setItem(
+                "token",
+                googleUser.accessToken
+            );
+
+            sessionStorage.setItem(
+                "user",
+                JSON.stringify({
+                    name: googleUser.displayName,
+                    email: googleUser.email,
+                    role: "user"
+                })
+            );
+            navigate("/home");
+
+
+        } catch (err) {
+
+            console.log(err);
+
+            alert("Google login failed");
+
+        }
+
+    }
     const inputStyle = (hasError) => ({
         borderRadius: "12px",
         padding: "14px",
@@ -203,7 +266,7 @@ const Login = () => {
                     style={buttonStyle}
                     onMouseOver={buttonHover}
                     onMouseOut={buttonLeave}
-                    onClick={() => alert("Login with Google")}
+                    onClick={handleGoogleLogin}
                 >
                     <FcGoogle size={24} /> Continue with Google
                 </Button>

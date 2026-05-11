@@ -7,10 +7,23 @@ import ReportsPage from './pages/ReportsPage'
 import ChatsPage from './pages/ChatsPage'
 import AnalyticsPage from './pages/AnalyticsPage'
 import SettingsPage from './pages/SettingsPage'
-
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 export default function AdminDashboard() {
     const [activePage, setActivePage] = useState('dashboard')
-
+    const navigate = useNavigate();
+    useEffect(() => {
+        const token = sessionStorage.getItem("token");
+        const user = JSON.parse(
+            sessionStorage.getItem("user")
+        );
+        if (!token) {
+            navigate("/login");
+        }
+        if (user?.role !== "admin") {
+            navigate("/");
+        }
+    }, []);
     const renderPage = () => {
         if (activePage === 'dashboard') return <DashboardPage />
         if (activePage === 'users') return <UsersPage />

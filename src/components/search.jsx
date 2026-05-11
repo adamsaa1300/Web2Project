@@ -8,7 +8,7 @@ const Search = () => {
     const navigate = useNavigate();
     useEffect(() => {//redirect to log in if not logged
 
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         if (!token) {
             navigate("/login");
