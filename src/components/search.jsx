@@ -54,6 +54,7 @@ const Search = () => {
                             <option>Lab Coats</option>
                             <option>Colors</option>
                             <option>Bags</option>
+                            <option>Others</option>
                         </Form.Select>
                     </Col>
 

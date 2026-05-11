@@ -209,11 +209,15 @@ const handleSubmit = async (e) => {
                   <label className="form-label small fw-bold">Category *</label>
                   <select name="category" value={formData.category} onChange={handleChange} required className="form-select border-0 shadow-sm" style={{ backgroundColor: "#fcf9f5" }}>
                     <option value="">Select Category</option>
-                    <option value="motors">Cars & Motors</option>
-                    <option value="electronics">Electronics</option>
-                    <option value="fashion">Fashion & Clothing</option>
-                    <option value="home">Home & Garden</option>
-                    <option value="realestate">Real Estate</option>
+                    <option>All Categories</option>
+                    <option>Slides</option>
+                    <option>Books</option>
+                    <option>Calculators</option>
+                    <option>Laptops</option>
+                    <option>Lab Coats</option>
+                    <option>Colors</option>
+                    <option>Bags</option>
+                    <option>Others</option>
                   </select>
                 </div>
 
@@ -221,9 +225,15 @@ const handleSubmit = async (e) => {
                   <label className="form-label small fw-bold">Location *</label>
                   <select name="location" value={formData.location} onChange={handleChange} required className="form-select border-0 shadow-sm" style={{ backgroundColor: "#fcf9f5" }}>
                     <option value="">Select City</option>
-                    {palestineCities.map(city => (
-                      <option key={city} value={city.toLowerCase()}>{city}</option>
-                    ))}
+                    <option>Nablus</option>
+                    <option>Ramallah</option>
+                    <option>Hebron</option>
+                    <option>Jerusalem</option>
+                    <option>Jenin</option>
+                    <option>Tulkarm</option>
+                    <option>Qalqilya</option>
+                    <option>Bethlehem</option>
+                    <option>Jericho</option>
                   </select>
                 </div>
                 <div className="col-md-6">
