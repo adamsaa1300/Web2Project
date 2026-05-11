@@ -143,8 +143,14 @@ function CreateAd({ userRole }) {
       return;
     }
 
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const currentUserId = user?._id || user?.id;
+
+if (!currentUserId) {
+    alert("Please log in first to perform this action.");
+    return;
+}
     const data = new FormData();
-    const currentUserId = sessionStorage.getItem("userId") || "Sama_Test_User"; 
     data.append("user", currentUserId); 
     data.append("title", formData.title);
     data.append("category", formData.category);
