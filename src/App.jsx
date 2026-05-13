@@ -3,11 +3,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/navbar.jsx";
-import Login from "./components/login.jsx";
-import Register from "./components/register.jsx";
-import Home from "./components/homepage.jsx";
+import Login from "./pages/login.jsx";
+import Register from "./pages/register.jsx";
+import Home from "./pages/homepage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
-import Search from "./components/search.jsx";
+import Search from "./pages/search.jsx";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import CreateAd from "./components/CreateAd.jsx";
 import ChatPage from "./components/chatpage.jsx";

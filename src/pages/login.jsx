@@ -11,7 +11,7 @@ import {
 import {
     auth,
     provider
-} from "../firebase";
+} from "../firebase.js";
 
 const Login = () => {
     const navigate = useNavigate();

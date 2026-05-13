@@ -150,7 +150,8 @@ if (!currentUserId) {
     return;
 }
     const data = new FormData();
-    data.append("user", currentUserId); 
+    data.append("user", currentUserId);
+    data.append("userName", storedData.name);
     data.append("title", formData.title);
     data.append("category", formData.category);
     data.append("location", formData.location);
@@ -174,7 +175,7 @@ if (!currentUserId) {
       });
 
       if (response.status === 201 || response.status === 200) {
-        alert("Listing Added Successfully! 🎉");
+
         navigate("/"); 
       }
     } catch (error) {
