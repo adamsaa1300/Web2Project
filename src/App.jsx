@@ -1,7 +1,7 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
-
+import ForgotPassword from "./pages/ForgotPassword";
 import Navbar from "./components/navbar.jsx";
 import Login from "./pages/login.jsx";
 import Register from "./pages/register.jsx";
@@ -23,6 +23,8 @@ function App() {
                         <Route path="/home" element={<Home />} />
 
                         <Route path="/login" element={<Login />} />
+
+                        <Route path="/forgot-password" element={<ForgotPassword />}/>
 
                         <Route path="/register" element={<Register />} />
 

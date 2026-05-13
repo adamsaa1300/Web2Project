@@ -232,7 +232,20 @@ const Login = () => {
                             </div>
                         )}
                     </Form.Group>
+                    <div
+                        className="mb-2"
+                        style={{
+                            textAlign: "center",
 
+                            cursor: "pointer",
+                            color: "#5a3e2b",
+                            fontWeight: "500",
+                            fontSize: "13px"
+                        }}
+                        onClick={() => navigate("/forgot-password")}
+                    >
+                        Forgot Password?
+                    </div>
                     <Button
                         type="submit"
                         style={buttonStyle}
@@ -251,6 +264,7 @@ const Login = () => {
                 >
                     Register
                 </Button>
+
 
                 <div
                     style={{
