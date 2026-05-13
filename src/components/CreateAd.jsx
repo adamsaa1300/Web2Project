@@ -143,9 +143,8 @@ function CreateAd({ userRole }) {
       return;
     }
 
-  const user = JSON.parse(sessionStorage.getItem("user"));
-  const currentUserId = user?._id || user?.id;
-
+  const storedData = JSON.parse(sessionStorage.getItem("user"));
+  const currentUserId = storedData?.user?.id || storedData?.id;
 if (!currentUserId) {
     alert("Please log in first to perform this action.");
     return;
