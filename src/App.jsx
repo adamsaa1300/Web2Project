@@ -10,6 +10,7 @@ import ProfilePage from "./pages/ProfilePage.jsx";
 import Search from "./components/search.jsx";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import CreateAd from "./components/CreateAd.jsx";
+import ChatPage from "./components/chatpage.jsx";
 function App() {
     return (
         <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#fdf5ec', minHeight: '100vh' }}>
@@ -32,6 +33,8 @@ function App() {
                         <Route path="/admin" element={<AdminDashboard />} />
 
                         <Route path="/add-ad" element={<CreateAd />} />
+
+                        <Route path="/chat" element={<ChatPage />} />
                     </Routes>
                 </div>
             </div>
