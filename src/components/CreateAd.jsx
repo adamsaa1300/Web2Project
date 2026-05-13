@@ -166,7 +166,7 @@ if (!currentUserId) {
     });
 
     try {
-      const apiUrl = "http://localhost:5000/api/ads"; 
+      const apiUrl = "http://localhost:5000/api/products";
       const response = await axios.post(apiUrl, data, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`

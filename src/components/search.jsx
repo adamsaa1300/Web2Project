@@ -4,6 +4,13 @@ import { useNavigate } from "react-router-dom";
 const Search = () => {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [filters, setFilters] = useState({
+        category: "",
+        location: "",
+        college: "",
+        university: "",
+        price: ""
+    });
     const [hasSearched, setHasSearched] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {//redirect to log in if not logged
@@ -22,7 +29,58 @@ const Search = () => {
         try {
             const res = await fetch("http://localhost:5000/api/products");
             const data = await res.json();
-            setResults(data);
+
+            const filtered = data.filter((item) => {
+
+                const categoryMatch =
+                    !filters.category ||
+                    filters.category === "All Categories" ||
+                    item.category === filters.category;
+
+                const locationMatch =
+                    !filters.location ||
+                    filters.location === "Any Location" ||
+                    item.location === filters.location;
+
+                const collegeMatch =
+                    !filters.college ||
+                    filters.college === "All Faculties" ||
+                    item.college === filters.college;
+
+                const universityMatch =
+                    !filters.university ||
+                    filters.university === "All Universities" ||
+                    item.university === filters.university;
+
+                let priceMatch = true;
+
+                if (filters.price === "0-50") {
+                    priceMatch = item.price >= 0 && item.price <= 50;
+                }
+
+                else if (filters.price === "50-200") {
+                    priceMatch = item.price > 50 && item.price <= 200;
+                }
+
+                else if (filters.price === "200-1000") {
+                    priceMatch = item.price > 200 && item.price <= 1000;
+                }
+
+                else if (filters.price === "1000+") {
+                    priceMatch = item.price > 1000;
+                }
+
+                return (
+                    categoryMatch &&
+                    locationMatch &&
+                    collegeMatch &&
+                    universityMatch &&
+                    priceMatch
+                );
+            });
+
+            setResults(filtered);
+
         } catch (err) {
             console.log(err);
         }
@@ -45,7 +103,12 @@ const Search = () => {
                 <Row className="g-2">
 
                     <Col md={2}>
-                        <Form.Select>
+                        <Form.Select
+                            value={filters.category}
+                            onChange={(e) =>
+                                setFilters({ ...filters, category: e.target.value })
+                            }
+                        >
                             <option>All Categories</option>
                             <option>Slides</option>
                             <option>Books</option>
@@ -59,7 +122,12 @@ const Search = () => {
                     </Col>
 
                     <Col md={2}>
-                        <Form.Select>
+                        <Form.Select
+                            value={filters.location}
+                            onChange={(e) =>
+                                setFilters({ ...filters, location: e.target.value })
+                            }
+                        >
                             <option>Any Location</option>
                             <option>Nablus</option>
                             <option>Ramallah</option>
@@ -74,17 +142,27 @@ const Search = () => {
                     </Col>
 
                     <Col md={2}>
-                        <Form.Select>
-                            <option>Price Range</option>
-                            <option>0 - 50</option>
-                            <option>50 - 200</option>
-                            <option>200 - 1000</option>
-                            <option>1000+</option>
+                        <Form.Select
+                            value={filters.price}
+                            onChange={(e) =>
+                                setFilters({ ...filters, price: e.target.value })
+                            }
+                        >
+                            <option value="">Price Range</option>
+                            <option value="0-50">0 - 50</option>
+                            <option value="50-200">50 - 200</option>
+                            <option value="200-1000">200 - 1000</option>
+                            <option value="1000+">1000+</option>
                         </Form.Select>
                     </Col>
 
                     <Col md={2}>
-                        <Form.Select>
+                        <Form.Select
+                            value={filters.college}
+                            onChange={(e) =>
+                                setFilters({ ...filters, college: e.target.value })
+                            }
+                        >
                             <option>All Faculties</option>
                             <option>Medicine</option>
                             <option>Engineering</option>
@@ -97,7 +175,12 @@ const Search = () => {
                     </Col>
 
                     <Col md={3}>
-                        <Form.Select>
+                        <Form.Select
+                            value={filters.university}
+                            onChange={(e) =>
+                                setFilters({ ...filters, university: e.target.value })
+                            }
+                        >
                             <option>All Universities</option>
                             <option>Palestine University</option>
                             <option>An-Najah National University</option>
@@ -140,28 +223,179 @@ const Search = () => {
                     <Row className="g-4 mt-2">
                         {results.map((item) => (
                             <Col md={4} key={item._id}>
-                                <Card style={{ borderRadius: "15px", overflow: "hidden" }}>
+                                <Card
+                                    className="border-0 shadow-sm h-100"
+                                    style={{
+                                        borderRadius: "22px",
+                                        overflow: "hidden",
+                                        transition: "0.3s ease",
+                                        cursor: "pointer"
+                                    }}
 
-                                    <img
-                                        src={item.image}
-                                        alt=""
-                                        style={{ height: "200px", width: "100%", objectFit: "cover" }}
-                                    />
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.transform = "translateY(-8px)";
+                                    }}
 
-                                    <Card.Body>
-                                        <Card.Title>{item.title}</Card.Title>
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.transform = "translateY(0px)";
+                                    }}
+                                >
 
-                                        <Card.Text style={{ color: "#777", fontSize: "14px" }}>
+                                    <div
+                                        id={`carousel-featured-${item._id}`}
+                                        className="carousel slide"
+                                    >
+
+                                        <div className="carousel-inner">
+
+                                            {Array.isArray(item.images) && item.images.map((img, index) => (
+
+                                                <div
+                                                    key={index}
+                                                    className={`carousel-item ${index === 0 ? "active" : ""}`}
+                                                >
+
+                                                    <img
+                                                        src={img}
+                                                        alt="product"
+
+                                                        onClick={() =>
+                                                            window.open(img, "_blank")
+                                                        }
+
+                                                        className="d-block w-100"
+
+                                                        style={{
+                                                            height: "260px",
+                                                            objectFit: "cover",
+                                                            cursor: "pointer"
+                                                        }}
+                                                    />
+
+                                                </div>
+
+                                            ))}
+
+                                        </div>
+
+                                        {item.images?.length > 1 && (
+                                            <>
+                                                <button
+                                                    className="carousel-control-prev"
+                                                    type="button"
+                                                    data-bs-target={`#carousel-featured-${item._id}`}
+                                                    data-bs-slide="prev"
+                                                >
+                                                    <span className="carousel-control-prev-icon"></span>
+                                                </button>
+
+                                                <button
+                                                    className="carousel-control-next"
+                                                    type="button"
+                                                    data-bs-target={`#carousel-featured-${item._id}`}
+                                                    data-bs-slide="next"
+                                                >
+                                                    <span className="carousel-control-next-icon"></span>
+                                                </button>
+                                            </>
+                                        )}
+
+                                    </div>
+
+                                    <Card.Body className="d-flex flex-column gap-2 p-4">
+
+                                        <div className="d-flex justify-content-between align-items-center">
+
+                                            <Card.Title
+                                                className="fw-bold mb-0"
+                                                style={{
+                                                    color: "#5a3e2b",
+                                                    fontSize: "20px"
+                                                }}
+                                            >
+                                                {item.title}
+                                            </Card.Title>
+
+                                            <span
+                                                className="px-3 py-1 fw-semibold"
+                                                style={{
+                                                    backgroundColor: "#f5e7d0",
+                                                    borderRadius: "999px",
+                                                    fontSize: "12px",
+                                                    color: "#5a3e2b"
+                                                }}
+                                            >
+                {item.category}
+            </span>
+
+                                        </div>
+
+                                        <Card.Text
+                                            className="text-muted"
+                                            style={{
+                                                fontSize: "14px",
+                                                minHeight: "55px"
+                                            }}
+                                        >
                                             {item.description}
                                         </Card.Text>
 
-                                        <h5 style={{ color: "#5a3e2b", fontWeight: "bold" }}>
-                                            ${item.price}
-                                        </h5>
+                                        <div
+                                            className="d-flex flex-column gap-1"
+                                            style={{
+                                                fontSize: "14px",
+                                                color: "#777"
+                                            }}
+                                        >
 
-                                        <div style={{ fontSize: "13px", color: "#999" }}>
-                                            {item.user?.name} • {item.location}
+                                            <div>📍 {item.location}</div>
+
+                                            <div>🎓 {item.university}</div>
+
+                                            <div>🏛️ {item.college}</div>
+
+                                            <div>📦 {item.condition}</div>
+
                                         </div>
+
+                                        <div className="d-flex justify-content-between align-items-center mt-2">
+
+                                            <h4
+                                                className="fw-bold mb-0"
+                                                style={{
+                                                    color: "#5a3e2b"
+                                                }}
+                                            >
+                                                ₪{item.price}
+                                            </h4>
+
+                                            {item.isNegotiable && (
+                                                <span
+                                                    className="fw-semibold text-success"
+                                                    style={{
+                                                        fontSize: "13px"
+                                                    }}
+                                                >
+                    Negotiable
+                </span>
+                                            )}
+
+                                        </div>
+
+                                        <Button
+                                            onClick={() => navigate(`/chat/${item.user}`)}
+
+                                            className="mt-3 border-0 fw-semibold"
+
+                                            style={{
+                                                backgroundColor: "#5a3e2b",
+                                                borderRadius: "14px",
+                                                padding: "12px"
+                                            }}
+                                        >
+                                            Start Chat
+                                        </Button>
+
                                     </Card.Body>
 
                                 </Card>
