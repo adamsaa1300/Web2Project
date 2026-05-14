@@ -44,16 +44,29 @@ export default function ListingsSection({ listings, colors, shellCard }) {
         )}
       </div>
 
-      <div className="row g-3">
-        {listings.map((item) => (
-          <ListingCard
-            key={item.title}
-            item={item}
-            colors={colors}
-            shellCard={shellCard}
-          />
-        ))}
-      </div>
+    {listings.length === 0 ? (
+  <div
+    className="text-center py-5"
+    style={{ color: colors.muted }}
+  >
+    <h5 className="fw-bold mb-2">No listings yet</h5>
+
+    <p className="mb-0">
+      Start selling by adding your first listing.
+    </p>
+  </div>
+) : (
+  <div className="row g-3">
+    {listings.map((item) => (
+      <ListingCard
+        key={item.title}
+        item={item}
+        colors={colors}
+        shellCard={shellCard}
+      />
+    ))}
+  </div>
+)}
     </div>
   );
 }
