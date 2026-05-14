@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
@@ -8,80 +8,26 @@ import AboutCard from "../components/profile/AboutCard";
 import StatsOverview from "../components/profile/StatsOverview";
 import FeedbackCard from "../components/profile/FeedbackCard";
 
+const currentUser = JSON.parse(sessionStorage.getItem("user"));
+
 const profileData = {
-  fullName: "Sara Ahmad",
-  username: "@sara_ah",
-  joined: "Joined January 2024",
-  bio: "Engineering student. Selling useful items and keeping track of marketplace activity.",
-  university: "State University",
-  major: "Mechanical Engineering",
-  year: "4th Year",
-  location: "Amman, Jordan",
-  email: "sara@example.com",
+  fullName: currentUser?.name || "User",
+  username: currentUser?.email || "@user",
+  joined: "Joined Sawweq",
+  bio: "Sawweq marketplace user.",
+  university: currentUser?.uni || "University",
+  major: currentUser?.faculty || "Faculty",
+  year: "Student",
+  location: currentUser?.location || "Location",
+  email: currentUser?.email || "email@sawweq.com",
+
   avatar:
     "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80",
+
   cover:
     "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
 };
 
-const listings = [
-  {
-    title: "Noise-Cancelling Headphones",
-    category: "Electronics",
-    price: "$95",
-    status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Dorm Mini Fridge",
-    category: "Home & Living",
-    price: "$100",
-    status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Thermodynamics Textbook",
-    category: "Books",
-    price: "$40",
-    status: "Sold",
-    image:
-      "https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Mechanical Keyboard",
-    category: "Electronics",
-    price: "$60",
-    status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Desk Lamp",
-    category: "Electronics",
-    price: "$25",
-    status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Printer",
-    category: "Electronics",
-    price: "$80",
-    status: "Unavailable",
-    image:
-      "https://images.unsplash.com/photo-1612817159949-195b6eb9e31a?auto=format&fit=crop&w=800&q=80",
-  },
-];
-
-const stats = [
-  { label: "Listings", value: 16 },
-  { label: "Sold", value: 112 },
-  { label: "Rating", value: "4.8 ★" },
-  { label: "Followers", value: 205 },
-  { label: "Following", value: 180 },
-];
 
 const aboutItems = [
   { label: "Full Name", value: profileData.fullName },
@@ -133,6 +79,40 @@ const shellCard = {
 };
 
 export default function ProfilePage() {
+  const [listings, setListings] = useState([]);
+
+useEffect(() => {
+
+  if (!currentUser?.email) return;
+
+  fetch(`http://localhost:5000/api/ads/user/${currentUser.email}`)
+    .then((res) => res.json())
+    .then((data) => {
+
+      const formattedAds = data.map((ad) => ({
+        title: ad.title,
+        category: ad.category,
+        price: `$${ad.price}`,
+        status: ad.status,
+        image:
+          ad.images && ad.images.length > 0
+            ? `http://localhost:5000/${ad.images[0]}`
+            : "https://via.placeholder.com/300",
+      }));
+
+      setListings(formattedAds);
+
+    })
+    .catch((err) => console.error(err));
+
+}, []);
+const stats = [
+    { label: "Listings", value: listings.length },
+    { label: "Sold", value: 112 },
+    { label: "Rating", value: "4.8 ★" },
+    { label: "Followers", value: 205 },
+    { label: "Following", value: 180 },
+  ];
   return (
     <div style={{ background: colors.bg, minHeight: "100vh", color: colors.text }}>
       <div className="container-fluid py-4 px-3 px-lg-4">
