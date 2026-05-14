@@ -42,6 +42,22 @@ const Home = () => {
 
         fetchProducts();
     }, []);
+
+    useEffect(() => {
+
+        if (selectedImages.length > 0) {
+            document.body.style.overflow = "hidden";
+        }
+
+        else {
+            document.body.style.overflow = "auto";
+        }
+
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+
+    }, [selectedImages]);
     const handleSearch = async () => {
         setLoading(true);
         setHasSearched(true);
@@ -196,6 +212,12 @@ const Home = () => {
             <div style={{ height: "50px" }} />
             {selectedImages.length > 0 && (
                 <div
+
+                    onClick={() => {
+                        setSelectedImages([]);
+                        setSelectedIndex(0);
+                    }}
+
                     style={{
                         position: "fixed",
                         top: 0,
@@ -210,11 +232,15 @@ const Home = () => {
                     }}
                 >
 
-                    {/* CLOSE */}
+
                     <button
-                        onClick={() => {
+                        onClick={(e) => {
+
+                            e.stopPropagation();
+
                             setSelectedImages([]);
                             setSelectedIndex(0);
+
                         }}
                         style={{
                             position: "absolute",
@@ -233,16 +259,20 @@ const Home = () => {
                         ×
                     </button>
 
-                    {/* PREVIOUS */}
+
                     {selectedImages.length > 1 && (
                         <button
-                            onClick={() =>
+                            onClick={(e) => {
+
+                                e.stopPropagation();
+
                                 setSelectedIndex(
                                     selectedIndex === 0
                                         ? selectedImages.length - 1
                                         : selectedIndex - 1
-                                )
-                            }
+                                );
+
+                            }}
                             style={{
                                 position: "absolute",
                                 left: "30px",
@@ -259,8 +289,11 @@ const Home = () => {
                         </button>
                     )}
 
-                    {/* IMAGE */}
+
                     <img
+
+                        onClick={(e) => e.stopPropagation()}
+
                         src={selectedImages[selectedIndex]}
                         alt=""
                         style={{
@@ -271,16 +304,20 @@ const Home = () => {
                         }}
                     />
 
-                    {/* NEXT */}
+
                     {selectedImages.length > 1 && (
                         <button
-                            onClick={() =>
+                            onClick={(e) => {
+
+                                e.stopPropagation();
+
                                 setSelectedIndex(
                                     selectedIndex === selectedImages.length - 1
                                         ? 0
                                         : selectedIndex + 1
-                                )
-                            }
+                                );
+
+                            }}
                             style={{
                                 position: "absolute",
                                 right: "30px",

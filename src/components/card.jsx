@@ -168,7 +168,9 @@ const ProductCard = ({
                             minHeight: "55px"
                         }}
                     >
-                        {item.description}
+                        {item.description?.length > 70
+                            ? item.description.slice(0, 70) + "..."
+                            : item.description}
                     </div>
 
                 </div>

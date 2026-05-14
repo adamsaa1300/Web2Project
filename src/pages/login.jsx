@@ -98,18 +98,27 @@ const Login = () => {
 
             const googleUser = result.user;
 
+            const response = await axios.post(
+                "http://localhost:5000/api/users/google-login",
+                {
+                    name: googleUser.displayName,
+                    email: googleUser.email
+                }
+            );
+
             sessionStorage.setItem(
                 "token",
-                googleUser.accessToken
+                response.data.token
             );
 
             sessionStorage.setItem(
                 "user",
-                JSON.stringify({
-                    name: googleUser.displayName,
-                    email: googleUser.email,
-                    role: "user"
-                })
+                JSON.stringify(response.data.user)
+            );
+
+            sessionStorage.setItem(
+                "role",
+                response.data.user.role
             );
             navigate("/home");
 
