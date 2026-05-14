@@ -23,7 +23,7 @@ export const getUsers = async () => {
 }
 
 export const getAds = async () => {
-    const res = await fetch(`${BASE}/ads`, {
+    const res = await fetch(`${BASE}/products`, {
         headers: authHeaders()
     })
     return res.json()
@@ -74,17 +74,14 @@ export const deleteReport = async (id) => {
 }
 
 export const deleteAd = async (id) => {
-    await fetch(`${BASE}/ads/${id}`, {
+    await fetch(`${BASE}/products/${id}`, {
         method: 'DELETE',
         headers: authHeaders()
     })
 }
 
 export const getWeeklyStats = async () => {
-    const res = await fetch(`${BASE}/ads/weekly`, {
-        headers: authHeaders()
-    })
-    return res.json()
+    return []
 }
 
 export const getAdmin = async () => {
