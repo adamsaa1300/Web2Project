@@ -251,7 +251,7 @@ const Login = () => {
                             fontWeight: "500",
                             fontSize: "13px"
                         }}
-                        onClick={() => navigate("/forgot-password")}
+
                     >
                         Forgot Password?
                     </div>

@@ -1,5 +1,5 @@
-import React from "react";
-import { Card, Button } from "react-bootstrap";
+import React, { useState } from "react";
+import { Card, Button ,Modal,Form} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({
@@ -9,7 +9,9 @@ const ProductCard = ({
                      }) => {
 
     const navigate = useNavigate();
-
+    const [showReport, setShowReport] = useState(false);
+    const [reason, setReason] = useState("");
+    const [reportType, setReportType] = useState("");
     return (
 
         <Card
@@ -168,8 +170,8 @@ const ProductCard = ({
                             minHeight: "55px"
                         }}
                     >
-                        {item.description?.length > 70
-                            ? item.description.slice(0, 70) + "..."
+                        {item.description?.length > 100
+                            ? item.description.slice(0, 100) + "..."
                             : item.description}
                     </div>
 
@@ -212,9 +214,176 @@ const ProductCard = ({
                 >
                     Start Chat
                 </Button>
+                <div
+                    onClick={() => setShowReport(true)}
 
+                    className="text-end mt-2"
+
+                    style={{
+                        color: "#5a3e2b",
+                        fontSize: "13px",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        textDecoration: "underline"
+                    }}
+                >
+                    Report
+                </div>
             </Card.Body>
+            <Modal
+                show={showReport}
+                centered
+                onHide={() => setShowReport(false)}
+            >
 
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        Report Product
+                    </Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+
+                    <Form.Group className="mb-3">
+
+                        <Form.Label>
+                            Report Type
+                        </Form.Label>
+
+                        <Form.Select
+
+                            value={reportType}
+
+                            onChange={(e) =>
+                                setReportType(e.target.value)
+                            }
+                        >
+
+                            <option value="">
+                                Select reason
+                            </option>
+
+                            <option>
+                                Scam
+                            </option>
+
+                            <option>
+                                Fake Product
+                            </option>
+
+                            <option>
+                                Inappropriate Content
+                            </option>
+
+                            <option>
+                                Spam
+                            </option>
+
+                            <option>
+                                Wrong Category
+                            </option>
+
+                            <option>
+                                Other
+                            </option>
+
+                        </Form.Select>
+
+                    </Form.Group>
+
+                    <Form.Group>
+
+                        <Form.Label>
+                            Additional Details
+                        </Form.Label>
+
+                        <Form.Control
+                            as="textarea"
+                            rows={3}
+
+                            value={reason}
+
+                            onChange={(e) =>
+                                setReason(e.target.value)
+                            }
+
+                            placeholder="Write report reason..."
+                        />
+
+                    </Form.Group>
+
+                </Modal.Body>
+
+                <Modal.Footer>
+
+                    <Button
+                        variant="secondary"
+                        onClick={() => setShowReport(false)}
+                    >
+                        Cancel
+                    </Button>
+
+                    <Button
+
+                        style={{
+                            backgroundColor: "#5a3e2b",
+                            border: "none"
+                        }}
+
+                        onClick={async () => {
+
+                            if (!reportType) {
+
+                                alert("Please select a report type");
+
+                                return;
+                            }
+
+                            try {
+                                const token =
+                                    sessionStorage.getItem("token");
+
+                                await fetch(
+                                    "http://localhost:5000/api/reports",
+                                    {
+                                        method: "POST",
+
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            Authorization: `Bearer ${token}`
+                                        },
+
+                                        body: JSON.stringify({
+                                            productId: item._id,
+                                            type: reportType,
+                                            reason
+                                        })
+                                    }
+                                );
+
+
+
+                                setShowReport(false);
+
+                                setReason("");
+
+                            } catch (err) {
+
+                                console.log(err);
+
+                                alert("Failed to submit report");
+
+                            }
+
+                        }}
+
+                    >
+                        Submit Report
+                    </Button>
+
+                </Modal.Footer>
+
+            </Modal>
         </Card>
 
 
