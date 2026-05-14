@@ -16,13 +16,14 @@ export default function DashboardPage() {
         getAds().then(data => setAds(data))
         getReports().then(data => setReports(data))
         getWeeklyStats().then(data => setWeekData(data))
+            
     }, [])
 
     const maxVal = weekData.length ? Math.max(...weekData.map(w => w.val)) || 1 : 1
 
     const statsCards = [
         { icon: <FaUsers/>,        title: "Total Users",   value: users.length,                                  color: theme.purple  },
-        { icon: <FaBullhorn/>,     title: "Active Ads",    value: ads.filter(a => a.status === 'active').length, color: theme.success },
+        { icon: <FaBullhorn/>, title: "Active Ads",        value: ads.length,                                    color: theme.success },
         { icon: <FaShoppingCart/>, title: "Today's Deals", value: 0,                                             color: theme.warning },
         { icon: <FaFlag/>,         title: "New Reports",   value: reports.length,                                color: theme.danger  },
     ]
