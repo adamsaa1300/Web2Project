@@ -1,7 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import ListingCard from "./ListingCard";
 
 export default function ListingsSection({ listings, colors, shellCard }) {
+  const navigate = useNavigate();
   const activeCount = listings.filter((item) => item.status === "Active").length;
   const soldCount = listings.filter((item) => item.status === "Sold").length;
   const unavailableCount = listings.filter(
@@ -23,6 +25,7 @@ export default function ListingsSection({ listings, colors, shellCard }) {
         </h4>
 
         <button
+        onClick={() => navigate("/add-ad")}
           className="btn"
           style={{
             background: colors.primary,

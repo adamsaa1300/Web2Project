@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function StatItem({ value, label, colors }) {
   return (
@@ -24,6 +25,7 @@ export default function ProfileHeader({
   colors,
   shellCard,
 }) {
+  const navigate = useNavigate();
   return (
     <div style={{ ...shellCard, overflow: "hidden" }}>
       <div style={{ position: "relative", height: 120 }}>
@@ -98,6 +100,7 @@ export default function ProfileHeader({
           </div>
 
           <button
+           onClick={() => navigate("/profile/edit")}
             className="btn mt-md-4"
             style={{
               background: colors.soft2,
