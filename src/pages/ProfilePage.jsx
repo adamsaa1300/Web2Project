@@ -8,42 +8,13 @@ import AboutCard from "../components/profile/AboutCard";
 import StatsOverview from "../components/profile/StatsOverview";
 import FeedbackCard from "../components/profile/FeedbackCard";
 
-const currentUser = JSON.parse(sessionStorage.getItem("user"));
-
-const profileData = {
-  fullName: currentUser?.name || "User",
-  username: currentUser?.email || "@user",
-  joined: "Joined Sawweq",
-  bio: "Sawweq marketplace user.",
-  university: currentUser?.uni || "University",
-  major: currentUser?.faculty || "Faculty",
-  year: "Student",
-  location: currentUser?.location || "Location",
-  email: currentUser?.email || "email@sawweq.com",
-
-  avatar:
-    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80",
-
-  cover:
-    "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
+const getCurrentUser = () => {
+  try {
+    return JSON.parse(sessionStorage.getItem("user")) || {};
+  } catch {
+    return {};
+  }
 };
-
-
-const aboutItems = [
-  { label: "Full Name", value: profileData.fullName },
-  { label: "Email", value: profileData.email },
-  { label: "University", value: profileData.university },
-  { label: "Major", value: profileData.major },
-  { label: "Year", value: profileData.year },
-  { label: "Location", value: profileData.location },
-];
-
-const overviewItems = [
-  { label: "Total Listings", value: "16", icon: "bi-grid" },
-  { label: "Items Sold", value: "112", icon: "bi-check-circle" },
-  { label: "Total Earned", value: "$2,750", icon: "bi-cash-stack" },
-  { label: "Member Since", value: "Jan 2024", icon: "bi-calendar3" },
-];
 
 const feedback = [
   {
@@ -79,40 +50,76 @@ const shellCard = {
 };
 
 export default function ProfilePage() {
+  const currentUser = getCurrentUser();
   const [listings, setListings] = useState([]);
 
-useEffect(() => {
+  const profileData = {
+    fullName: currentUser?.name || "User",
+    username: currentUser?.email || "@user",
+    joined: currentUser?.createdAt
+      ? `Member since ${new Date(currentUser.createdAt).toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric",
+        })}`
+      : "Member",
+    bio: "Sawweq marketplace user.",
+    university: currentUser?.uni || "University",
+    major: currentUser?.faculty || "Faculty",
+    year: "Student",
+    location: currentUser?.location || "Location",
+    email: currentUser?.email || "email@sawweq.com",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80",
+    cover:
+      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
+  };
 
-  if (!currentUser?.email) return;
+  const aboutItems = [
+    { label: "Full Name", value: profileData.fullName },
+    { label: "Email", value: profileData.email },
+    { label: "University", value: profileData.university },
+    { label: "Major", value: profileData.major },
+    { label: "Year", value: profileData.year },
+    { label: "Location", value: profileData.location },
+  ];
 
-  fetch(`http://localhost:5000/api/ads/user/${currentUser.email}`)
-    .then((res) => res.json())
-    .then((data) => {
+  useEffect(() => {
+    if (!currentUser?.email) return;
 
-      const formattedAds = data.map((ad) => ({
-        title: ad.title,
-        category: ad.category,
-        price: `$${ad.price}`,
-        status: ad.status,
-        image:
-          ad.images && ad.images.length > 0
-            ? `http://localhost:5000/${ad.images[0]}`
-            : "https://via.placeholder.com/300",
-      }));
+    fetch(`http://localhost:5000/api/ads/user/${currentUser.email}`)
+      .then((res) => res.json())
+      .then((data) => {
+        const formattedAds = data.map((ad) => ({
+          title: ad.title,
+          category: ad.category,
+          price: `$${ad.price}`,
+          status: ad.status,
+          image:
+            ad.images && ad.images.length > 0
+              ? `http://localhost:5000/${ad.images[0]}`
+              : "https://via.placeholder.com/300",
+        }));
 
-      setListings(formattedAds);
+        setListings(formattedAds);
+      })
+      .catch((err) => console.error(err));
+  }, [currentUser?.email]);
 
-    })
-    .catch((err) => console.error(err));
-
-}, []);
-const stats = [
+  const stats = [
     { label: "Listings", value: listings.length },
     { label: "Sold", value: 112 },
     { label: "Rating", value: "4.8 ★" },
     { label: "Followers", value: 205 },
     { label: "Following", value: 180 },
   ];
+
+  const overviewItems = [
+    { label: "Total Listings", value: listings.length, icon: "bi-grid" },
+    { label: "Items Sold", value: "112", icon: "bi-check-circle" },
+    { label: "Total Earned", value: "$2,750", icon: "bi-cash-stack" },
+    { label: "Member Since", value: profileData.joined, icon: "bi-calendar3" },
+  ];
+
   return (
     <div style={{ background: colors.bg, minHeight: "100vh", color: colors.text }}>
       <div className="container-fluid py-4 px-3 px-lg-4">
