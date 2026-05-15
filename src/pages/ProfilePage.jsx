@@ -62,7 +62,7 @@ export default function ProfilePage() {
           year: "numeric",
         })}`
       : "Member",
-    bio: "Sawweq marketplace user.",
+    bio: currentUser?.bio || "Sawweq marketplace user.",
     university: currentUser?.uni || "University",
     major: currentUser?.faculty || "Faculty",
     year: "Student",
