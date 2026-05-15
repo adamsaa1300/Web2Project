@@ -176,7 +176,7 @@ if (!currentUserId) {
 
       if (response.status === 201 || response.status === 200) {
 
-        navigate("/"); 
+       navigate("/profile");
       }
     } catch (error) {
       console.error("Error creating ad:", error);

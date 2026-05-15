@@ -13,6 +13,7 @@ import Search from "./pages/search.jsx";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import CreateAd from "./components/CreateAd.jsx";
 import ChatPage from "./components/chatpage.jsx";
+import EditAd from "./pages/EditAd.jsx";
 
 function App() {
     return (
@@ -55,6 +56,11 @@ function App() {
                         <Route path="/add-ad" element={<CreateAd />} />
 
                         <Route path="/chat" element={<ChatPage />} />
+
+                        <Route
+                            path="/edit-ad/:id"
+                            element={<EditAd />}
+                        />
                     </Routes>
                 </div>
             </div>

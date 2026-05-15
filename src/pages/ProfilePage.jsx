@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
@@ -50,7 +51,9 @@ const shellCard = {
 };
 
 export default function ProfilePage() {
+  const navigate = useNavigate();
   const currentUser = getCurrentUser();
+  console.log("CURRENT USER:", currentUser);
   const [listings, setListings] = useState([]);
 
   const profileData = {
@@ -86,19 +89,22 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!currentUser?.email) return;
 
-    fetch(`http://localhost:5000/api/ads/user/${currentUser.email}`)
+   fetch(`http://localhost:5000/api/products/user/${currentUser.id}`)
       .then((res) => res.json())
       .then((data) => {
-        const formattedAds = data.map((ad) => ({
-          title: ad.title,
-          category: ad.category,
-          price: `$${ad.price}`,
-          status: ad.status,
-          image:
-            ad.images && ad.images.length > 0
-              ? `http://localhost:5000/${ad.images[0]}`
-              : "https://via.placeholder.com/300",
-        }));
+  const productsArray = Array.isArray(data) ? data : [];
+
+  const formattedAds = productsArray.map((ad) => ({
+  id: ad._id,
+  title: ad.title,
+  category: ad.category,
+  price: `$${ad.price}`,
+  status: ad.status || "active",
+  image:
+    ad.images && ad.images.length > 0
+      ? `http://localhost:5000/${ad.images[0]}`
+      : "https://via.placeholder.com/300",
+}));
 
         setListings(formattedAds);
       })
@@ -119,6 +125,47 @@ export default function ProfilePage() {
     { label: "Total Earned", value: "$2,750", icon: "bi-cash-stack" },
     { label: "Member Since", value: profileData.joined, icon: "bi-calendar3" },
   ];
+async function handleDelete(id) {
+  try {
+    await fetch(`http://localhost:5000/api/products/${id}`, {
+  method: "DELETE",
+  headers: {
+    Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+  },
+});
+
+    setListings((prev) => prev.filter((item) => item.id !== id));
+  } catch (err) {
+    console.error(err);
+  }
+}
+async function handleMarkSold(id) {
+  try {
+    await fetch(`http://localhost:5000/api/products/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        status: "sold",
+      }),
+    });
+
+    setListings((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? { ...item, status: "sold" }
+          : item
+      )
+    );
+  } catch (err) {
+    console.error(err);
+  }
+}
+function handleEdit(item) {
+  navigate(`/edit-ad/${item.id}`);
+}
 
   return (
     <div style={{ background: colors.bg, minHeight: "100vh", color: colors.text }}>
@@ -134,10 +181,13 @@ export default function ProfilePage() {
               />
 
               <ListingsSection
-                listings={listings}
-                colors={colors}
-                shellCard={shellCard}
-              />
+                 listings={listings}
+                 colors={colors}
+                 shellCard={shellCard}
+                 onDelete={handleDelete}
+                 onMarkSold={handleMarkSold}
+                 onEdit={handleEdit}
+               />
             </div>
           </div>
 

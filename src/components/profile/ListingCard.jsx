@@ -1,14 +1,23 @@
 import React from "react";
 
-export default function ListingCard({ item, colors, shellCard }) {
+export default function ListingCard({
+  item,
+  colors,
+  shellCard,
+  onDelete,
+  onMarkSold,
+  onEdit,
+}) {
+  const status = item.status?.toLowerCase();
+
   const statusBg =
-    item.status === "Sold"
+    status === "sold"
       ? "#d8c1af"
-      : item.status === "Unavailable"
+      : status === "unavailable"
       ? "#efe1d3"
       : "#e7efe1";
 
-  const statusColor = item.status === "Active" ? colors.success : colors.dark;
+  const statusColor = status === "active" ? colors.success : colors.dark;
 
   return (
     <div className="col-md-6 col-xl-4">
@@ -31,6 +40,7 @@ export default function ListingCard({ item, colors, shellCard }) {
               padding: "4px 10px",
               fontSize: ".78rem",
               fontWeight: 700,
+              textTransform: "capitalize",
             }}
           >
             {item.status}
@@ -42,13 +52,63 @@ export default function ListingCard({ item, colors, shellCard }) {
             <h6 className="mb-0 fw-bold" style={{ color: colors.text }}>
               {item.title}
             </h6>
+
             <span className="fw-bold" style={{ color: colors.dark }}>
               {item.price}
             </span>
           </div>
 
-          <div style={{ color: colors.muted, fontSize: ".9rem" }}>
+          <div
+            className="mb-3"
+            style={{ color: colors.muted, fontSize: ".9rem" }}
+          >
             {item.category}
+          </div>
+
+          <div className="d-flex gap-2 flex-wrap">
+            {status !== "sold" && (
+              <button
+                className="btn btn-sm flex-fill"
+                onClick={() => onMarkSold(item.id)}
+                style={{
+                  background: "#e7efe1",
+                  color: "#557c55",
+                  border: "1px solid #cfe2cf",
+                  borderRadius: 10,
+                  fontWeight: 700,
+                }}
+              >
+                Mark Sold
+              </button>
+            )}
+
+            <button
+              className="btn btn-sm flex-fill"
+              onClick={() => onEdit(item)}
+              style={{
+                background: "#efe7db",
+                color: "#8a6240",
+                border: "1px solid #e4d4c2",
+                borderRadius: 10,
+                fontWeight: 700,
+              }}
+            >
+              Edit
+            </button>
+
+            <button
+              className="btn btn-sm flex-fill"
+              onClick={() => onDelete(item.id)}
+              style={{
+                background: "#fff",
+                color: "#b23b3b",
+                border: "1px solid #e8c5c5",
+                borderRadius: 10,
+                fontWeight: 700,
+              }}
+            >
+              Delete
+            </button>
           </div>
         </div>
       </div>
