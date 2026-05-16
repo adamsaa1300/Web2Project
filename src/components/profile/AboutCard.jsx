@@ -34,18 +34,6 @@ export default function AboutCard({
           </div>
         ))}
       </div>
-
-      <button
-        className="btn w-100 mt-3"
-        style={{
-          background: colors.soft2,
-          color: colors.primary,
-          borderRadius: 10,
-          fontWeight: 700,
-        }}
-      >
-        Edit Details
-      </button>
     </RightCard>
   );
 }
