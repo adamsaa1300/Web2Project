@@ -43,6 +43,16 @@ function CreateAd({ userRole }) {
   const [selectedImages, setSelectedImages] = useState([]);
   const MAX_IMAGES = 8;
 
+  const hasUnsavedChanges =
+  formData.title ||
+  formData.category ||
+  formData.location ||
+  formData.university ||
+  formData.college ||
+  formData.price ||
+  formData.description ||
+  selectedImages.length > 0;
+
   const Colors = {
     bg: "#fdf5ec",
     nav: "#f5e7d0",
@@ -135,6 +145,34 @@ function CreateAd({ userRole }) {
   const removeImage = (index) => {
     setSelectedImages((prev) => prev.filter((_, i) => i !== index));
   };
+
+  useEffect(() => {
+  const handleBeforeUnload = (e) => {
+    if (hasUnsavedChanges) {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  };
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
+
+  return () => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+  };
+}, [hasUnsavedChanges]);
+
+const handleCancel = () => {
+  if (hasUnsavedChanges) {
+    const confirmLeave = window.confirm(
+      "You have unsaved changes. If you leave this page, your uploaded images and entered data will be lost. Do you want to continue?"
+    );
+
+    if (!confirmLeave) return;
+  }
+
+  navigate(-1);
+};
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -362,8 +400,12 @@ if (!currentUserId) {
             </div>
 
             <div className="d-flex gap-2">
-              <button type="button" className="btn btn-white border flex-grow-1 py-2 fw-bold" style={{ backgroundColor: "#ffffff", color: Colors.text, borderColor: Colors.border }} onClick={() => navigate(-1)}>Cancel</button>
-              <button type="submit" className="btn flex-grow-1 py-2 fw-bold shadow text-white border-0" style={{ backgroundColor: Colors.btnPrimary }}>Add Listing <FaArrowRight className="ms-2" size={14} /></button>
+              <button type="button" className="btn btn-white border flex-grow-1 py-2 fw-bold" style={{ backgroundColor: "#ffffff", color: Colors.text, borderColor: Colors.border }} onClick={handleCancel}>
+                Cancel
+              </button>
+              <button type="submit" className="btn flex-grow-1 py-2 fw-bold shadow text-white border-0" style={{ backgroundColor: Colors.btnPrimary }}>
+                Add Listing <FaArrowRight className="ms-2" size={14} />
+              </button>
             </div>
           </div>
         </div>
