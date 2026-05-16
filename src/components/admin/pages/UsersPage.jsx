@@ -94,11 +94,11 @@ export default function UsersPage() {
                     <thead>
                         <tr style={{ backgroundColor: theme.cardBg2 }}>
                             <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '160px' }}>Name</th>
-                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '200px' }}>Email</th>
-                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '150px' }}>University</th>
+                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '230px' }}>Email</th>
+                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '250px' }}>University</th>
                             <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '60px' }}>Ads</th>
-                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '100px' }}>Status</th>
-                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '240px' }}>Actions</th>
+                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '200px' }}>Status</th>
+                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '250px' }}>Actions</th>
                         </tr>                        
                     </thead>
                     <tbody>
@@ -124,7 +124,8 @@ export default function UsersPage() {
                                         </span>
                                     </td>
                                     <td style={{ padding: '12px 16px', verticalAlign: 'middle', width: '240px', minWidth: '240px', whiteSpace: 'nowrap' }}>
-                                        <div style={{ display: 'flex', gap: '6px' }}>
+                                        <div
+                                            style={{display: 'flex', gap: '6px', justifyContent: 'center', alignItems: 'center'}}>
                                             {user.status === 'active' && (
                                                 <button style={btnStyle('#fef3de', '#b07d1a')} {...hover} onClick={() => handleUpdate(user._id, 'suspended')}>Suspend</button>
                                             )}

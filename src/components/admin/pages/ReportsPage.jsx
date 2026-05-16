@@ -2,13 +2,13 @@ import { theme } from "../../../theme"
 import { useState, useEffect } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { getReports, deleteReport } from "../../../api"
-
+import { useNavigate } from "react-router-dom"
 export default function ReportsPage() {
     const [reports, setReports] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [modalMsg, setModalMsg] = useState('')
     const [pendingAction, setPendingAction] = useState(null)
-
+    const navigate = useNavigate()
     useEffect(() => {
         getReports().then(data => setReports(data))
     }, [])
@@ -98,7 +98,33 @@ export default function ReportsPage() {
                                         {report.tag}
                                     </span>
                                 </td>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textPrimary, verticalAlign: 'middle' }}>{report.title}</td>
+                                <td
+                                    onClick={() => navigate("/search", {
+                                        state: {
+                                            selectedProductId: report.productId
+                                        }
+                                    })}
+
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.color = "#a98a6f"
+                                    }}
+
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.color = theme.textPrimary
+                                    }}
+
+                                    style={{
+                                        padding: '12px 16px',
+                                        fontSize: '13px',
+                                        color: theme.textPrimary,
+                                        verticalAlign: 'middle',
+                                        cursor: 'pointer',
+                                        transition: '0.2s ease',
+                                        fontWeight: '600'
+                                    }}
+                                >
+                                    {report.title}
+                                </td>
                                 <td style={{padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle'}}>{report.type}</td>
                                 <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{report.desc}</td>
                                 <td style={{ padding: '12px 16px', verticalAlign: 'middle' }}>

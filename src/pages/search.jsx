@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Button, Form, Card, Spinner } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ProductCard from "../components/card.jsx";
 import Filters from "../components/filters.jsx";
 const Search = () => {
@@ -17,12 +17,20 @@ const Search = () => {
     const [selectedImages, setSelectedImages] = useState([]);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const navigate = useNavigate();
+    const location = useLocation();
     useEffect(() => {//redirect to log in if not logged
 
         const token = sessionStorage.getItem("token");
 
         if (!token) {
             navigate("/login");
+        }
+
+    }, []);
+    useEffect(() => {
+
+        if (location.state?.selectedProductId) {
+           handleSearch();
         }
 
     }, []);
@@ -83,7 +91,19 @@ const Search = () => {
                 );
             });
 
-            setResults(filtered);
+            if (location.state?.selectedProductId) {
+
+                const selectedOnly = filtered.filter(
+                    item => item._id === location.state.selectedProductId
+                );
+
+                setResults(selectedOnly);
+
+            } else {
+
+                setResults(filtered);
+
+            }
 
         } catch (err) {
             console.log(err);
@@ -95,21 +115,26 @@ const Search = () => {
     return (
         <div style={{ backgroundColor: "#f6f1eb", minHeight: "100vh", padding: "20px" }}>
 
-            <Filters
-                filters={filters}
-                setFilters={setFilters}
-                handleSearch={handleSearch}
-            />
-            <p
-                style={{
-                    color: "#5a3e2b",
-                    textAlign: "center",
-                    marginBottom: "15px",
-                    fontSize: "20px"
-                }}
-            >
-                Browse products easily using filters to find exactly what you need.
-            </p>
+            {!location.state?.selectedProductId && (
+                <>
+                    <Filters
+                        filters={filters}
+                        setFilters={setFilters}
+                        handleSearch={handleSearch}
+                    />
+
+                    <p
+                        style={{
+                            color: "#5a3e2b",
+                            textAlign: "center",
+                            marginBottom: "15px",
+                            fontSize: "20px"
+                        }}
+                    >
+                        Browse products easily using filters to find exactly what you need.
+                    </p>
+                </>
+            )}
             <Container className="mt-4">
 
                 {loading && (
