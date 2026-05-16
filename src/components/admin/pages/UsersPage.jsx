@@ -11,7 +11,24 @@ export default function UsersPage() {
     const [pendingAction, setPendingAction] = useState(null)
 
     useEffect(() => {
-        getUsers().then(data => setUsers(data))
+        const fetchUsers = async () => {
+            const data = await getUsers()
+            const usersWithAds = await Promise.all(
+                data.map(async (user) => {
+                    const res = await fetch(
+                        `http://localhost:5000/api/products/count/${user._id}`
+                    )
+                    const countData = await res.json()
+
+                    return {
+                        ...user,
+                        ads: countData.count
+                    }
+                })
+            )
+            setUsers(usersWithAds)
+        }
+        fetchUsers()
     }, [])
 
     const getStatusColor = (status) => {

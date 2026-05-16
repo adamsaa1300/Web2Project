@@ -188,7 +188,7 @@ if (!currentUserId) {
     <div style={{ backgroundColor: Colors.bg, minHeight: "100vh" }}>
 
 
-      <form className="container pb-5" style={{ paddingTop: "100px" }} onSubmit={handleSubmit}>
+      <form className="container pb-5" style={{ paddingTop: "10px" }} onSubmit={handleSubmit}>
         <div className="mb-4">
           <h2 className="fw-bold mb-1" style={{ color: Colors.text }}>Add Listing</h2>
           <p className="text-muted small">Dashboard / Add Listing</p>

@@ -352,9 +352,15 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
                                         },
 
                                         body: JSON.stringify({
-                                            productId: item._id,
-                                            type: reportType,
-                                            reason
+
+                                            title: item.title,
+
+                                            desc: reason||"No additional description",
+
+                                            tag: "ad",
+
+                                            type: reportType
+
                                         })
                                     }
                                 );
