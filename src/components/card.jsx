@@ -8,7 +8,7 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
     const [showReport, setShowReport] = useState(false);
     const [reason, setReason] = useState("");
     const [reportType, setReportType] = useState("");
-
+    const [reportMessage, setReportMessage] = useState("");
     return (
         <Card
             className="border-0 shadow-sm h-100"
@@ -235,7 +235,31 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
                 </Modal.Header>
 
                 <Modal.Body>
+                    {reportMessage && (
 
+                        <div
+                            style={{
+                                backgroundColor:
+                                    reportMessage.includes("success")
+                                        ? "#e6f4ec"
+                                        : "#fdecea",
+
+                                color:
+                                    reportMessage.includes("success")
+                                        ? "#2d7a4f"
+                                        : "#b5451b",
+
+                                padding: "10px",
+                                borderRadius: "10px",
+                                marginBottom: "15px",
+                                fontSize: "14px",
+                                fontWeight: "500"
+                            }}
+                        >
+                            {reportMessage}
+                        </div>
+
+                    )}
                     <Form.Group className="mb-3">
 
                         <Form.Label>
@@ -332,7 +356,7 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
 
                             if (!reportType) {
 
-                                alert("Please select a report type");
+                                setReportMessage("Please select a report type");
 
                                 return;
                             }
@@ -364,11 +388,20 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
                                         })
                                     }
                                 );
-                                setShowReport(false);
+                                setReportMessage("Report submitted successfully");
+
                                 setReason("");
+
+                                setTimeout(() => {
+
+                                    setShowReport(false);
+
+                                    setReportMessage("");
+
+                                }, 1500);
                             } catch (err) {
                                 console.log(err);
-                                alert("Failed to submit report");
+                                setReportMessage("Failed to submit report");
                             }
                         }}
                     >

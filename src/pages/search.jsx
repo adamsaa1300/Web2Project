@@ -100,7 +100,16 @@ const Search = () => {
                 setFilters={setFilters}
                 handleSearch={handleSearch}
             />
-
+            <p
+                style={{
+                    color: "#5a3e2b",
+                    textAlign: "center",
+                    marginBottom: "15px",
+                    fontSize: "20px"
+                }}
+            >
+                Browse products easily using filters to find exactly what you need.
+            </p>
             <Container className="mt-4">
 
                 {loading && (
