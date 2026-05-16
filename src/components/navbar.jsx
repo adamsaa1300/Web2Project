@@ -7,11 +7,8 @@ import {
     Tooltip,
     Dropdown
 } from "react-bootstrap";
-
 import { useNavigate } from "react-router-dom";
-
 import logo from "../assets/logo.jpg";
-
 import {
     AiFillHome,
     AiOutlineUser,
@@ -21,7 +18,6 @@ import {
     AiOutlineSearch,
     AiOutlineDashboard
 } from "react-icons/ai";
-
 const Navbar = () => {
     const navigate = useNavigate();
     const user = JSON.parse(sessionStorage.getItem("user"));
@@ -44,17 +40,11 @@ const Navbar = () => {
         if (page === "profile") navigate("/profile");
     };
 
-    const handleSearchClick = () => {
-        navigate("/search");
-    };
+    const handleSearchClick = () => {navigate("/search");};
     const handleLogout = () => {
-
         sessionStorage.removeItem("token");
-
         sessionStorage.removeItem("user");
-
         navigate("/login");
-
     }
     const renderTooltip = (text) => (
         <Tooltip

@@ -4,58 +4,39 @@ import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
-import {
-    signInWithPopup
-} from "firebase/auth";
-
-import {
-    auth,
-    provider
-} from "../firebase.js";
+import {signInWithPopup} from "firebase/auth";
+import {auth, provider} from "../firebase.js";
 
 const Login = () => {
     const navigate = useNavigate();
     useEffect(() => {
-
         const token = sessionStorage.getItem("token");
-
         if (token) {
             navigate("/home");
         }
-
     }, []);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState({});
-
     const handleLogin = async (e) => {
         e.preventDefault();
-
         let newErrors = {};
-
         if (!email) {
-
             newErrors.email = "Email required";
-
         }
         else if (
             !email.endsWith("@sawweq.com") &&
             !email.endsWith("@sawweq.admin.com")
         ) {
-
             newErrors.email = "Invalid email";
-
         }
         if (!password) {
             newErrors.password = "Password required";
         }
-
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
-
             try {
-
                 const response = await axios.post(
                     "http://localhost:5000/api/users/login",
                     {
@@ -77,27 +58,17 @@ const Login = () => {
                 navigate("/home");
 
             } catch (err) {
-
                 setErrors({
                     [err.response?.data?.field]:
                         err.response?.data?.error || "Login failed"
                 });
-
             }
-
         }
     };
     const handleGoogleLogin = async () => {
-
         try {
-
-            const result = await signInWithPopup(
-                auth,
-                provider
-            );
-
+            const result = await signInWithPopup(auth, provider);
             const googleUser = result.user;
-
             const response = await axios.post(
                 "http://localhost:5000/api/users/google-login",
                 {
@@ -105,33 +76,25 @@ const Login = () => {
                     email: googleUser.email
                 }
             );
-
             sessionStorage.setItem(
                 "token",
                 response.data.token
             );
-
             sessionStorage.setItem(
                 "user",
                 JSON.stringify(response.data.user)
             );
-
             sessionStorage.setItem(
                 "role",
                 response.data.user.role
             );
             navigate("/home");
-
-
         } catch (err) {
-
             console.log(err);
-
-            alert("Google login failed");
-
+           // alert("Google login failed");
         }
-
     }
+
     const inputStyle = (hasError) => ({
         borderRadius: "12px",
         padding: "14px",
@@ -245,13 +208,11 @@ const Login = () => {
                         className="mb-2"
                         style={{
                             textAlign: "center",
-
                             cursor: "pointer",
                             color: "#5a3e2b",
                             fontWeight: "500",
                             fontSize: "13px"
                         }}
-
                     >
                         Forgot Password?
                     </div>
@@ -273,8 +234,6 @@ const Login = () => {
                 >
                     Register
                 </Button>
-
-
                 <div
                     style={{
                         textAlign: "center",

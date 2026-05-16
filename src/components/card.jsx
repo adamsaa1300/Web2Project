@@ -1,21 +1,16 @@
 import React, { useState } from "react";
 import { Card, Button ,Modal,Form} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import {FaMapMarkerAlt, FaUniversity, FaBuilding, FaBoxOpen} from "react-icons/fa";
 
-const ProductCard = ({
-                         item,
-                         setSelectedImages,
-                         setSelectedIndex
-                     }) => {
-
+const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
     const navigate = useNavigate();
     const [showReport, setShowReport] = useState(false);
     const [reason, setReason] = useState("");
     const [reportType, setReportType] = useState("");
+
     return (
-
         <Card
-
             className="border-0 shadow-sm h-100"
             style={{
                 borderRadius: "22px",
@@ -24,11 +19,11 @@ const ProductCard = ({
                 cursor: "pointer"
             }}
 
-            onMouseEnter={(e) => {
+            onMouseEnter={(e) => {//When the user places the mouse over the product card:the card moves slightly upward
                 e.currentTarget.style.transform = "translateY(-8px)";
             }}
 
-            onMouseLeave={(e) => {
+            onMouseLeave={(e) => {//returns to its normal position
                 e.currentTarget.style.transform = "translateY(0px)";
             }}
         >
@@ -74,27 +69,20 @@ const ProductCard = ({
                             <img
                                 src={img}
                                 alt="product"
-
                                 onClick={() => {
                                     setSelectedImages(item.images);
                                     setSelectedIndex(index);
                                 }}
-
                                 className="d-block w-100"
-
                                 style={{
                                     height: "260px",
                                     objectFit: "cover",
                                     cursor: "pointer"
                                 }}
                             />
-
                         </div>
-
                     ))}
-
                 </div>
-
                 {item.images?.length > 1 && (
                     <>
                         <button
@@ -116,12 +104,9 @@ const ProductCard = ({
                         </button>
                     </>
                 )}
-
             </div>
 
             <Card.Body className="d-flex flex-column gap-3 p-4">
-
-
                 <Card.Title
                     className="fw-bold text-center mb-1"
                     style={{
@@ -132,7 +117,6 @@ const ProductCard = ({
                     {item.title}
                 </Card.Title>
 
-
                 <div
                     className="d-flex flex-column gap-2 text-center"
                     style={{
@@ -142,12 +126,25 @@ const ProductCard = ({
                     }}
                 >
 
-                    <div>📍 {item.location}</div>
+                    <div className="d-flex align-items-center justify-content-center gap-2">
+                        <FaMapMarkerAlt />
+                        <span>{item.location}</span>
+                    </div>
 
-                    <div>🎓 {item.university}</div>
+                    <div className="d-flex align-items-center justify-content-center gap-2">
+                        <FaUniversity />
+                        <span>{item.university}</span>
+                    </div>
 
-                    <div>🏛️ {item.college}</div>
-                    <div>📦 {item.condition}</div>
+                    <div className="d-flex align-items-center justify-content-center gap-2">
+                        <FaBuilding />
+                        <span>{item.college}</span>
+                    </div>
+
+                    <div className="d-flex align-items-center justify-content-center gap-2">
+                        <FaBoxOpen />
+                        <span>{item.condition}</span>
+                    </div>
                 </div>
 
 
@@ -179,7 +176,6 @@ const ProductCard = ({
 
 
                 <div className="d-flex justify-content-between align-items-center mt-auto">
-
                     <h4
                         className="fw-bold mb-0"
                         style={{
@@ -188,7 +184,6 @@ const ProductCard = ({
                     >
                         ₪{item.price}
                     </h4>
-
                     {item.isNegotiable && (
                         <span
                             className="fw-semibold text-success"
@@ -199,10 +194,7 @@ const ProductCard = ({
                 Negotiable
             </span>
                     )}
-
                 </div>
-
-
                 <Button
                     onClick={() => navigate(`/chat/${item.user}`)}
                     className="mt-2 border-0 fw-semibold"
@@ -269,6 +261,12 @@ const ProductCard = ({
 
                             <option>
                                 Fake Product
+                            </option>
+                            <option>
+                               Bad Conditions
+                            </option>
+                            <option>
+                                Fake Informations
                             </option>
 
                             <option>
@@ -360,33 +358,19 @@ const ProductCard = ({
                                         })
                                     }
                                 );
-
-
-
                                 setShowReport(false);
-
                                 setReason("");
-
                             } catch (err) {
-
                                 console.log(err);
-
                                 alert("Failed to submit report");
-
                             }
-
                         }}
-
                     >
                         Submit Report
                     </Button>
-
                 </Modal.Footer>
-
             </Modal>
         </Card>
-
-
     );
 };
 

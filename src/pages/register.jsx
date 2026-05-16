@@ -21,9 +21,7 @@ const Register = () => {
     const [showConfirm, setShowConfirm] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {
-
         const token = sessionStorage.getItem("token");
-
         if (token) {
             navigate("/home");
         }
@@ -42,14 +40,11 @@ const Register = () => {
     };
 
     const handleSubmit =async (e) => {
-        e.preventDefault();
-
+        e.preventDefault();//Stops browser refresh during form submission.
         let newErrors = {};
-
-        if (!form.name || form.name.length < 2) {
-            newErrors.name = "Name must be at least 2 characters";
+        if (!form.name || form.name.length < 6) {
+            newErrors.name = "Name must be at least 6 characters";
         }
-
         if (!form.birthDate) {
             newErrors.birthDate = "Required";
         }

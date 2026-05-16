@@ -21,14 +21,12 @@ const Home = () => {
     });
     const navigate = useNavigate();
     useEffect(() => {
-
         const token = sessionStorage.getItem("token");
-
         if (!token) {
             navigate("/login");//redirect to log in if not logged
         }
-
     }, []);
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -39,35 +37,29 @@ const Home = () => {
                 console.log(err);
             }
         };
-
         fetchProducts();
     }, []);
 
     useEffect(() => {
-
         if (selectedImages.length > 0) {
             document.body.style.overflow = "hidden";
         }
-
         else {
             document.body.style.overflow = "auto";
         }
-
         return () => {
             document.body.style.overflow = "auto";
         };
 
     }, [selectedImages]);
+
     const handleSearch = async () => {
         setLoading(true);
         setHasSearched(true);
-
         try {
             const res = await fetch("http://localhost:5000/api/products");
             const data = await res.json();
-
             const filtered = data.filter((item) => {
-
                 const categoryMatch =
                     !filters.category ||
                     filters.category === "All Categories" ||
@@ -206,13 +198,10 @@ const Home = () => {
                     ))}
 
                 </Row>
-
             </Container>
-
             <div style={{ height: "50px" }} />
             {selectedImages.length > 0 && (
                 <div
-
                     onClick={() => {
                         setSelectedImages([]);
                         setSelectedIndex(0);
@@ -231,13 +220,9 @@ const Home = () => {
                         zIndex: 9999
                     }}
                 >
-
-
                     <button
                         onClick={(e) => {
-
                             e.stopPropagation();
-
                             setSelectedImages([]);
                             setSelectedIndex(0);
 
@@ -258,20 +243,15 @@ const Home = () => {
                     >
                         ×
                     </button>
-
-
                     {selectedImages.length > 1 && (
                         <button
                             onClick={(e) => {
-
                                 e.stopPropagation();
-
                                 setSelectedIndex(
                                     selectedIndex === 0
                                         ? selectedImages.length - 1
                                         : selectedIndex - 1
                                 );
-
                             }}
                             style={{
                                 position: "absolute",
@@ -288,12 +268,8 @@ const Home = () => {
                             ‹
                         </button>
                     )}
-
-
                     <img
-
                         onClick={(e) => e.stopPropagation()}
-
                         src={selectedImages[selectedIndex]}
                         alt=""
                         style={{
@@ -303,20 +279,15 @@ const Home = () => {
                             objectFit: "contain"
                         }}
                     />
-
-
                     {selectedImages.length > 1 && (
                         <button
                             onClick={(e) => {
-
                                 e.stopPropagation();
-
                                 setSelectedIndex(
                                     selectedIndex === selectedImages.length - 1
                                         ? 0
                                         : selectedIndex + 1
                                 );
-
                             }}
                             style={{
                                 position: "absolute",

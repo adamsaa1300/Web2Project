@@ -6,9 +6,7 @@ const Filters = ({
                         setFilters,
                         handleSearch
                     }) => {
-
     return (
-
         <Container
             className="shadow p-4"
             style={{
@@ -58,7 +56,6 @@ const Filters = ({
                         <option>Jericho</option>
                     </Form.Select>
                 </Col>
-
                 <Col md={2}>
                     <Form.Select
                         value={filters.price}
@@ -91,7 +88,6 @@ const Filters = ({
                         <option>Pharmacy</option>
                     </Form.Select>
                 </Col>
-
                 <Col md={3}>
                     <Form.Select
                         value={filters.university}
@@ -119,10 +115,8 @@ const Filters = ({
                         Search
                     </Button>
                 </Col>
-
             </Row>
         </Container>
-
     );
 };
 
