@@ -1,16 +1,27 @@
 import { theme } from "../../../theme"
 import { useState, useEffect } from 'react'
 import { Modal, ListGroup, Button } from 'react-bootstrap'
-import { getChats, getChat } from "../../../api"
+//import { getChats, getChat } from "../../../api"
+import { getAllProductChats, getProductChat } from "../../../api"
 
 export default function ChatsPage() {
     const [chats, setChats]       = useState([])
     const [selected, setSelected] = useState(null)
     const [show, setShow]         = useState(false)
 
-    useEffect(() => {
+    /*useEffect(() => {
         getChats().then(data => setChats(data))
     }, [])
+    */
+   useEffect(() => {
+    getAllProductChats().then(data => {
+        if (Array.isArray(data)) {
+            setChats(data)
+        } else {
+            setChats([])
+        }
+    })
+}, [])
 
     const handleView = (id) => {
         getChat(id).then(data => {
@@ -18,6 +29,8 @@ export default function ChatsPage() {
             setShow(true)
         })
     }
+    
+
 
     const getStatusBg = (status) => {
         if (status === 'active')  return '#e6f4ec'

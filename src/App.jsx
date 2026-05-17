@@ -36,6 +36,8 @@ function App() {
                         <Route path="/add-ad" element={<CreateAd />} />
 
                         <Route path="/chat" element={<ChatPage />} />
+
+                        <Route path="/chat/:chatId" element={<ChatPage />} />
                     </Routes>
                 </div>
             </div>
