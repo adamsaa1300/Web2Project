@@ -99,7 +99,7 @@ export default function ProfilePage() {
         price: `₪${ad.price}`,
 
         status:
-            ad.status || "active",
+            ad.status || "available",
 
         image:
             ad.images && ad.images.length > 0

@@ -15,19 +15,15 @@ export default function ListingCard({
                                     }){
 
     const status = item.status?.toLowerCase();
-
     const statusBg =
         status === "sold"
-            ? "#d8c1af"
-            : status === "unavailable"
-                ? "#efe1d3"
-                : "#e7efe1";
+            ? "#fdecea"
+            : "#e6f4ec";
 
     const statusColor =
-        status === "active"
-            ? colors.success
-            : colors.dark;
-
+        status === "sold"
+            ? "#b5451b"
+            : "#2d7a4f";
     return (
 
         <div className="col-md-6 col-xl-4">
@@ -79,45 +75,34 @@ export default function ListingCard({
                     >
                         {item.category}
                     </span>
-
                     <select
-                        value={item.status || "available"}
-
+                        value={item.status}
                         onChange={(e) =>
-                            onStatusChange(item.id, e.target.value)
+                            onStatusChange(
+                                item.id,
+                                e.target.value
+                            )
                         }
-
                         style={{
                             position: "absolute",
                             top: 12,
                             left: 12,
-
                             borderRadius: "999px",
-
                             padding: "8px 14px",
-
                             fontSize: ".82rem",
-
                             fontWeight: 700,
-
                             border: "none",
-
                             outline: "none",
-
                             cursor: "pointer",
-
                             appearance: "none",
-
                             backgroundColor:
                                 item.status === "sold"
                                     ? "#f4d7d3"
                                     : "#e7efe1",
-
                             color:
                                 item.status === "sold"
                                     ? "#8b2e2e"
                                     : "#557c55",
-
                             boxShadow:
                                 "0 2px 8px rgba(0,0,0,0.08)",
                         }}
