@@ -29,15 +29,10 @@ function App() {
                         <Route path="/register" element={<Register />} />
                         <Route path="/profile/:id" element={<PublicProfilePage />}/>
                         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}/>
-
                         <Route path="/search" element={ <ProtectedRoute><Search /> </ProtectedRoute>} />
-
                         <Route path="/admin" element={ <AdminRoute><AdminDashboard /> </AdminRoute>} />
-
                         <Route path="/add-ad" element={ <ProtectedRoute><CreateAd /> </ProtectedRoute>} />
-
-                        <Route path="/chat" element={<ChatPage />} />
-
+                        <Route path="/messages" element={<ChatPage />} />
                         <Route path="/chat/:chatId" element={<ChatPage />} />
                         <Route path="/chat" element={ <ProtectedRoute><ChatPage /> </ProtectedRoute>} />
                     </Routes>
