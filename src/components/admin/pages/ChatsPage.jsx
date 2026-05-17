@@ -35,6 +35,16 @@ export default function ChatsPage() {
 
         fetchChats();
     }, [])
+    */
+   useEffect(() => {
+    getAllProductChats().then(data => {
+        if (Array.isArray(data)) {
+            setChats(data)
+        } else {
+            setChats([])
+        }
+    })
+}, [])
 
     const handleView = (id) => {
         const handleView = async (id) => {
@@ -63,6 +73,8 @@ export default function ChatsPage() {
 
         }
     }
+    
+
 
     const getStatusBg = (status) => {
         if (status === 'active')  return '#e6f4ec'

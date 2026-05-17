@@ -6,6 +6,26 @@ import { FaUserCircle } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
     const navigate = useNavigate();
+    //aws-work
+    const handleStartChat = async () => {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+
+    if (!user) {
+        navigate("/login");
+        return;
+    }
+
+    const buyerId = user._id || user.id;
+
+    const data = await startProductChat(buyerId, item._id);
+
+    if (data.error) {
+        alert(data.error);
+        return;
+    }
+
+    navigate(`/chat/${data._id}`);
+};
     const [showReport, setShowReport] = useState(false);
     const [reason, setReason] = useState("");
     const [reportType, setReportType] = useState("");
@@ -223,17 +243,9 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
             </span>
                     )}
                 </div>
+                
                 <Button
-                    onClick={() => navigate(
-                        `/profile/${item.user._id || item.user}`,
-                        {
-                            state: {
-                                from:
-                                    location.state?.from ||
-                                    location.pathname
-                            }
-                        }
-                    )}
+                    onClick={handleStartChat}
                     className="mt-2 border-0 fw-semibold"
                     style={{
                         backgroundColor: "#5a3e2b",
@@ -243,6 +255,7 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
                 >
                     Start Chat
                 </Button>
+                
                 <div
                     onClick={() => setShowReport(true)}
 

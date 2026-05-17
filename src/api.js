@@ -108,3 +108,52 @@ export const changePassword = async (id, data) => {
     })
     return res.json()
 }
+//aws-work
+export const startProductChat = async (buyerId, productId) => {
+    const res = await fetch(`${BASE}/product-chats/start`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            ...authHeaders()
+        },
+        body: JSON.stringify({ buyerId, productId })
+    });
+
+    return res.json();
+};
+
+export const getProductChat = async (chatId) => {
+    const res = await fetch(`${BASE}/product-chats/${chatId}`, {
+        headers: authHeaders()
+    });
+
+    return res.json();
+};
+
+export const getAllProductChats = async () => {
+    const res = await fetch(`${BASE}/product-chats`, {
+        headers: authHeaders()
+    });
+
+    return res.json();
+};
+
+export const sendProductChatMessage = async (chatId, senderId, text) => {
+    const res = await fetch(`${BASE}/product-chats/${chatId}/messages`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            ...authHeaders()
+        },
+        body: JSON.stringify({ senderId, text })
+    });
+
+    return res.json();
+};
+export const getProductChatsByUser = async (userId) => {
+    const res = await fetch(`${BASE}/product-chats/user/${userId}`, {
+        headers: authHeaders()
+    });
+
+    return res.json();
+};
