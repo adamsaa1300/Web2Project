@@ -31,21 +31,65 @@ const Navbar = () => {
         transition: "0.2s ease",
     };
 
-    const handleClick = (page) => {
-        if (page === "home") navigate("/");
-        if (page === "login") navigate("/login");
-        if (page === "messages") navigate("/messages");
-        if (page === "addAd") navigate("/add-ad");
-        if (page === "admin") navigate("/admin");
-        if (page === "profile") navigate("/profile");
-    };
-
-    const handleSearchClick = () => {navigate("/search");};
-    const handleLogout = () => {
-        sessionStorage.removeItem("token");
-        sessionStorage.removeItem("user");
-        navigate("/login");
+  const handleClick = (page) => {
+    
+    if (page === "addAd") {
+        navigate("/add-ad");
+        return;
     }
+
+    const hasUnsavedChanges = sessionStorage.getItem("unsavedAd") === "true";
+
+    if (hasUnsavedChanges) {
+        const confirmLeave = window.confirm(
+            "You have unsaved changes. If you leave this page, your uploaded images and entered data will be lost. Do you want to continue?"
+        );
+
+        if (!confirmLeave) return;
+    }
+
+    sessionStorage.removeItem("unsavedAd");
+
+    if (page === "home") navigate("/");
+    if (page === "login") navigate("/login");
+    if (page === "messages") navigate("/messages");
+    if (page === "admin") navigate("/admin");
+    if (page === "profile") navigate("/profile");
+};
+    const handleSearchClick = () => {
+
+    const hasUnsavedChanges = sessionStorage.getItem("unsavedAd") === "true";
+
+    if (hasUnsavedChanges) {
+        const confirmLeave = window.confirm(
+            "You have unsaved changes. If you leave this page, your uploaded images and entered data will be lost. Do you want to continue?"
+        );
+
+        if (!confirmLeave) return;
+    }
+
+    sessionStorage.removeItem("unsavedAd");
+
+    navigate("/search");
+};
+   const handleLogout = () => {
+
+    const hasUnsavedChanges = sessionStorage.getItem("unsavedAd") === "true";
+
+    if (hasUnsavedChanges) {
+        const confirmLeave = window.confirm(
+            "You have unsaved changes. If you leave this page, your uploaded images and entered data will be lost. Do you want to continue?"
+        );
+
+        if (!confirmLeave) return;
+    }
+
+    sessionStorage.removeItem("unsavedAd");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
+       sessionStorage.removeItem("role");
+    navigate("/login");
+}
     const renderTooltip = (text) => (
         <Tooltip
             style={{

@@ -1,16 +1,40 @@
 import { theme } from "../../../theme"
 import { useState, useEffect } from 'react'
 import { Button, Modal } from 'react-bootstrap'
-import { getReports, deleteReport } from "../../../api"
-
+import axios from "axios"
+import { useNavigate } from "react-router-dom"
 export default function ReportsPage() {
     const [reports, setReports] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [modalMsg, setModalMsg] = useState('')
     const [pendingAction, setPendingAction] = useState(null)
-
+    const navigate = useNavigate()
     useEffect(() => {
-        getReports().then(data => setReports(data))
+        const fetchReports = async () => {
+
+            try {
+
+                const res = await axios.get(
+                    "http://localhost:5000/api/reports",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${sessionStorage.getItem("token")}`
+                        }
+                    }
+                );
+
+                setReports(res.data);
+
+            } catch (err) {
+
+                console.log(err);
+
+            }
+
+        };
+
+        fetchReports();
     }, [])
 
     const getStatusBg = (status) => {
@@ -54,14 +78,30 @@ export default function ReportsPage() {
 
     const handleIgnore = (id) => {
         confirm('are you sure you want to ignore this report ?', async () => {
-            await deleteReport(id)
+            await axios.delete(
+                `http://localhost:5000/api/reports/${id}`,
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${sessionStorage.getItem("token")}`
+                    }
+                }
+            )
             setReports(prev => prev.filter(r => r._id !== id))
         })
     }
 
     const handleResolve = (id) => {
         confirm('are you sure you want to resolve this report ?', async () => {
-            await deleteReport(id)
+            await axios.delete(
+                `http://localhost:5000/api/reports/${id}`,
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${sessionStorage.getItem("token")}`
+                    }
+                }
+            )
             setReports(prev => prev.filter(r => r._id !== id))
         })
     }
@@ -98,7 +138,35 @@ export default function ReportsPage() {
                                         {report.tag}
                                     </span>
                                 </td>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textPrimary, verticalAlign: 'middle' }}>{report.title}</td>
+                                <td
+                                    onClick={() => navigate("/search", {
+                                        state: {
+                                            selectedProductId: report.productId,
+                                            from: location.pathname
+                                        }
+
+                                    })}
+
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.color = "#a98a6f"
+                                    }}
+
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.color = theme.textPrimary
+                                    }}
+
+                                    style={{
+                                        padding: '12px 16px',
+                                        fontSize: '13px',
+                                        color: theme.textPrimary,
+                                        verticalAlign: 'middle',
+                                        cursor: 'pointer',
+                                        transition: '0.2s ease',
+                                        fontWeight: '600'
+                                    }}
+                                >
+                                    {report.title}
+                                </td>
                                 <td style={{padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle'}}>{report.type}</td>
                                 <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{report.desc}</td>
                                 <td style={{ padding: '12px 16px', verticalAlign: 'middle' }}>

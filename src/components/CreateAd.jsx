@@ -161,6 +161,14 @@ function CreateAd({ userRole }) {
   };
 }, [hasUnsavedChanges]);
 
+    useEffect(() => {
+      if (hasUnsavedChanges) {
+      sessionStorage.setItem("unsavedAd", "true");
+  }   else {
+    sessionStorage.removeItem("unsavedAd");
+  }
+}, [hasUnsavedChanges]);
+
 const handleCancel = () => {
   if (hasUnsavedChanges) {
     const confirmLeave = window.confirm(
@@ -183,10 +191,10 @@ const handleCancel = () => {
 
   const storedData = JSON.parse(sessionStorage.getItem("user"));
   const currentUserId = storedData?.user?.id || storedData?.id;
-if (!currentUserId) {
+    if (!currentUserId) {
     alert("Please log in first to perform this action.");
     return;
-}
+   }
     const data = new FormData();
     data.append("user", currentUserId);
     data.append("userName", storedData.name);
@@ -212,10 +220,10 @@ if (!currentUserId) {
         }
       });
 
-      if (response.status === 201 || response.status === 200) {
-
-        navigate("/"); 
-      }
+       if (response.status === 201 || response.status === 200) {
+    sessionStorage.removeItem("unsavedAd");
+    navigate("/"); 
+       }
     } catch (error) {
       console.error("Error creating ad:", error);
       alert(error.response?.data?.error || "Failed to add listing.");

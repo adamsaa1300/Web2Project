@@ -1,7 +1,7 @@
 import { theme } from "../../../theme"
 import { useState, useEffect } from 'react'
 import { Table, Badge, Button, Modal } from 'react-bootstrap'
-import { getUsers, updateUser, deleteUser } from '../../../api'
+import axios from "axios"
 
 export default function UsersPage() {
     const [users, setUsers] = useState([])
@@ -12,7 +12,17 @@ export default function UsersPage() {
 
     useEffect(() => {
         const fetchUsers = async () => {
-            const data = await getUsers()
+            const res = await axios.get(
+                "http://localhost:5000/api/users",
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${sessionStorage.getItem("token")}`
+                    }
+                }
+            );
+
+            const data = res.data;
             const usersWithAds = await Promise.all(
                 data.map(async (user) => {
                     const res = await fetch(
@@ -52,18 +62,44 @@ export default function UsersPage() {
     const handleUpdate = async (id, status) => {
         if (status === 'banned') {
             confirm('Are you sure you want to ban this user ?', async () => {
-                await updateUser(id, { status })
+                await axios.put(
+                    `http://localhost:5000/api/users/${id}`,
+                    { status },
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${sessionStorage.getItem("token")}`
+                        }
+                    }
+                )
                 setUsers(prev => prev.map(u => u._id === id ? { ...u, status } : u))
             })
         } else {
-            updateUser(id, { status })
+            await axios.put(
+                `http://localhost:5000/api/users/${id}`,
+                { status },
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${sessionStorage.getItem("token")}`
+                    }
+                }
+            )
             setUsers(prev => prev.map(u => u._id === id ? { ...u, status } : u))
         }
     }
 
     const handleDelete = async (id) => {
         confirm('Are you sure you want to delete this user ?', async () => {
-            await deleteUser(id)
+            await axios.delete(
+                `http://localhost:5000/api/users/${id}`,
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${sessionStorage.getItem("token")}`
+                    }
+                }
+            )
             setUsers(prev => prev.filter(u => u._id !== id))
         })
     }
@@ -94,11 +130,11 @@ export default function UsersPage() {
                     <thead>
                         <tr style={{ backgroundColor: theme.cardBg2 }}>
                             <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '160px' }}>Name</th>
-                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '200px' }}>Email</th>
-                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '150px' }}>University</th>
+                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '230px' }}>Email</th>
+                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '250px' }}>University</th>
                             <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '60px' }}>Ads</th>
-                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '100px' }}>Status</th>
-                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '240px' }}>Actions</th>
+                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '200px' }}>Status</th>
+                            <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '250px' }}>Actions</th>
                         </tr>                        
                     </thead>
                     <tbody>
@@ -124,7 +160,8 @@ export default function UsersPage() {
                                         </span>
                                     </td>
                                     <td style={{ padding: '12px 16px', verticalAlign: 'middle', width: '240px', minWidth: '240px', whiteSpace: 'nowrap' }}>
-                                        <div style={{ display: 'flex', gap: '6px' }}>
+                                        <div
+                                            style={{display: 'flex', gap: '6px', justifyContent: 'center', alignItems: 'center'}}>
                                             {user.status === 'active' && (
                                                 <button style={btnStyle('#fef3de', '#b07d1a')} {...hover} onClick={() => handleUpdate(user._id, 'suspended')}>Suspend</button>
                                             )}

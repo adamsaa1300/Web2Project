@@ -1,116 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-
+import EditProfileModal from "../../src/components/profile/editprofile.jsx";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ListingsSection from "../components/profile/ListingsSection";
 import AboutCard from "../components/profile/AboutCard";
-import StatsOverview from "../components/profile/StatsOverview";
-import FeedbackCard from "../components/profile/FeedbackCard";
-
-const profileData = {
-  fullName: "Sara Ahmad",
-  username: "@sara_ah",
-  joined: "Joined January 2024",
-  bio: "Engineering student. Selling useful items and keeping track of marketplace activity.",
-  university: "State University",
-  major: "Mechanical Engineering",
-  year: "4th Year",
-  location: "Amman, Jordan",
-  email: "sara@example.com",
-  avatar:
-    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80",
-  cover:
-    "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
+import axios from "axios";
+import { Modal, Button } from "react-bootstrap";
+import EditListingModal from "../pages/EditAd.jsx";
+const getCurrentUser = () => {
+  try {
+    return JSON.parse(sessionStorage.getItem("user")) || {};
+  } catch {
+    return {};
+  }
 };
 
-const listings = [
-  {
-    title: "Noise-Cancelling Headphones",
-    category: "Electronics",
-    price: "$95",
-    status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Dorm Mini Fridge",
-    category: "Home & Living",
-    price: "$100",
-    status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Thermodynamics Textbook",
-    category: "Books",
-    price: "$40",
-    status: "Sold",
-    image:
-      "https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Mechanical Keyboard",
-    category: "Electronics",
-    price: "$60",
-    status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Desk Lamp",
-    category: "Electronics",
-    price: "$25",
-    status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Printer",
-    category: "Electronics",
-    price: "$80",
-    status: "Unavailable",
-    image:
-      "https://images.unsplash.com/photo-1612817159949-195b6eb9e31a?auto=format&fit=crop&w=800&q=80",
-  },
-];
-
-const stats = [
-  { label: "Listings", value: 16 },
-  { label: "Sold", value: 112 },
-  { label: "Rating", value: "4.8 ★" },
-  { label: "Followers", value: 205 },
-  { label: "Following", value: 180 },
-];
-
-const aboutItems = [
-  { label: "Full Name", value: profileData.fullName },
-  { label: "Email", value: profileData.email },
-  { label: "University", value: profileData.university },
-  { label: "Major", value: profileData.major },
-  { label: "Year", value: profileData.year },
-  { label: "Location", value: profileData.location },
-];
-
-const overviewItems = [
-  { label: "Total Listings", value: "16", icon: "bi-grid" },
-  { label: "Items Sold", value: "112", icon: "bi-check-circle" },
-  { label: "Total Earned", value: "$2,750", icon: "bi-cash-stack" },
-  { label: "Member Since", value: "Jan 2024", icon: "bi-calendar3" },
-];
-
-const feedback = [
-  {
-    name: "Lina M.",
-    text: "Great seller, very friendly and easy to communicate with.",
-    rating: "★★★★★",
-  },
-  {
-    name: "Omar T.",
-    text: "Item matched the description and delivery was quick.",
-    rating: "★★★★★",
-  },
-];
 
 const colors = {
   bg: "#f6efe7",
@@ -133,50 +39,320 @@ const shellCard = {
 };
 
 export default function ProfilePage() {
+
+  const navigate = useNavigate();
+  useEffect(() => {
+
+    const token =
+        sessionStorage.getItem("token");
+
+    if (!token) {
+
+      navigate("/login");
+
+    }
+
+  }, []);
+  const currentUser = getCurrentUser();
+  console.log("CURRENT USER:", currentUser);
+  const [listings, setListings] = useState([]);
+  const [showEdit, setShowEdit] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [listingToDelete, setListingToDelete] = useState(null);
+  const [showListingEdit, setShowListingEdit] = useState(false);
+  const fetchUserProducts = async () => {
+
+    try {
+
+      const res = await fetch(
+          `http://localhost:5000/api/products/user/${currentUser.id}`
+      );
+
+      const data = await res.json();
+
+      const productsArray = Array.isArray(data)
+          ? data
+          : [];
+
+      const formattedAds = productsArray.map((ad) => ({
+
+        id: ad._id,
+
+        title: ad.title,
+
+        description: ad.description,
+
+        category: ad.category,
+
+        location:
+            ad.location || "Unknown Location",
+
+        university:
+            ad.university || "Unknown University",
+
+        college:
+            ad.college || "Unknown College",
+
+        condition:
+            ad.condition || "Unknown Condition",
+
+        price: `₪${ad.price}`,
+
+        status:
+            ad.status || "available",
+
+        image:
+            ad.images && ad.images.length > 0
+                ? ad.images[0]
+                : "https://via.placeholder.com/300",
+
+      }));
+
+      setListings(formattedAds);
+
+    } catch (err) {
+
+      console.error(err);
+
+    }
+
+  };
+  const [selectedListing, setSelectedListing] = useState(null);
+  const [profileData, setProfileData] = useState({
+    id: currentUser?.id,
+    fullName: currentUser?.name || "User",
+    username: currentUser?.email || "@user",
+    birthDate: currentUser?.birthDate
+        ? currentUser.birthDate.split("T")[0]
+        : "",
+    joined: currentUser?.createdAt
+      ? `Member since ${new Date(currentUser.createdAt).toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric",
+        })}`
+      : "Member",
+    bio: currentUser?.bio || "Sawweq marketplace user.",
+    university: currentUser?.uni || "University",
+    major: currentUser?.faculty || "Faculty",
+    year: "Student",
+    location: currentUser?.location || "Location",
+    email: currentUser?.email || "email@sawweq.com",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80",
+    cover:
+      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
+  });
+
+  const aboutItems = [
+    { label: "Full Name", value: profileData.fullName },
+    { label: "Email", value: profileData.email },
+    {label: "Birth Date", value: profileData.birthDate || "Not set",},
+    { label: "University", value: profileData.university },
+    { label: "Major", value: profileData.major },
+    { label: "Location", value: profileData.location },
+  ];
+
+  useEffect(() => {
+
+    if (!currentUser?.email) return;
+
+    fetchUserProducts();
+
+  }, [currentUser?.email]);
+
+  const handleDelete = (id) => {
+
+    setListingToDelete(id);
+
+    setShowDeleteModal(true);
+
+  };
+  const confirmDelete = async () => {
+
+    try {
+
+      await axios.delete(
+
+          `http://localhost:5000/api/products/${listingToDelete}`,
+
+          {
+            headers: {
+              Authorization:
+                  `Bearer ${sessionStorage.getItem("token")}`
+            }
+          }
+
+      );
+
+      fetchUserProducts();
+
+      setShowDeleteModal(false);
+
+    } catch (err) {
+
+      console.log(err);
+
+    }
+
+  };
+  const handleStatusChange = async (
+      id,
+      newStatus
+  ) => {
+
+    try {
+
+      await axios.put(
+
+          `http://localhost:5000/api/products/${id}`,
+
+          {
+            status: newStatus
+          },
+
+          {
+            headers: {
+              Authorization:
+                  `Bearer ${sessionStorage.getItem("token")}`
+            }
+          }
+
+      );
+
+      fetchUserProducts();
+
+    } catch (err) {
+
+      console.log(err);
+
+    }
+
+  };
+async function handleMarkSold(id) {
+  try {
+    await fetch(`http://localhost:5000/api/products/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        status: "sold",
+      }),
+    });
+
+    setListings((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? { ...item, status: "sold" }
+          : item
+      )
+    );
+  } catch (err) {
+    console.error(err);
+  }
+}
+  const handleEdit = (item) => {
+
+    setSelectedListing(item);
+
+    setShowListingEdit(true);
+
+  };
+
   return (
     <div style={{ background: colors.bg, minHeight: "100vh", color: colors.text }}>
       <div className="container-fluid py-4 px-3 px-lg-4">
-        <div className="row g-4">
-          <div className="col-lg-8">
-            <div className="d-flex flex-column gap-4">
+        <div className="row g-4 align-items-stretch">
+          <div className="col-lg-8 d-flex">
+            <div className="d-flex flex-column w-100">
               <ProfileHeader
                 profileData={profileData}
-                stats={stats}
                 colors={colors}
                 shellCard={shellCard}
+                onEdit={() => setShowEdit(true)}
               />
 
-              <ListingsSection
-                listings={listings}
-                colors={colors}
-                shellCard={shellCard}
-              />
             </div>
           </div>
 
-          <div className="col-lg-4">
-            <div className="d-flex flex-column gap-4">
+          <div className="col-lg-4 d-flex">
+            <div className="d-flex flex-column w-100">
               <AboutCard
                 aboutItems={aboutItems}
                 colors={colors}
                 shellCard={shellCard}
               />
 
-              <StatsOverview
-                overviewItems={overviewItems}
-                colors={colors}
-                shellCard={shellCard}
-              />
 
-              <FeedbackCard
-                feedback={feedback}
-                colors={colors}
-                shellCard={shellCard}
-              />
             </div>
           </div>
+
+          <ListingsSection
+              listings={listings}
+              colors={colors}
+              shellCard={shellCard}
+              onDelete={handleDelete}
+              onMarkSold={handleMarkSold}
+              onStatusChange={handleStatusChange}
+              onEdit={handleEdit}
+          />
         </div>
       </div>
+      <EditProfileModal
+          show={showEdit}
+          handleClose={() => setShowEdit(false)}
+          user={profileData}
+          setUser={setProfileData}
+      />
+      <EditListingModal
+          show={showListingEdit}
+          handleClose={() => setShowListingEdit(false)}
+          listing={selectedListing}
+          refreshListings={fetchUserProducts}
+      />
+      <Modal
+          show={showDeleteModal}
+          onHide={() => setShowDeleteModal(false)}
+          centered
+      >
+
+        <Modal.Header closeButton>
+
+          <Modal.Title>
+            Delete Listing
+          </Modal.Title>
+
+        </Modal.Header>
+
+        <Modal.Body>
+
+          Are you sure you want to delete this listing?
+
+        </Modal.Body>
+
+        <Modal.Footer>
+
+          <Button
+              variant="secondary"
+              onClick={() => setShowDeleteModal(false)}
+          >
+            Cancel
+          </Button>
+
+          <Button
+              onClick={confirmDelete}
+              style={{
+                backgroundColor: "#b23b3b",
+                border: "none"
+              }}
+          >
+            Delete
+          </Button>
+
+        </Modal.Footer>
+
+      </Modal>
     </div>
   );
 }

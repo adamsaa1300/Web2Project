@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Card, Button ,Modal,Form} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import {FaMapMarkerAlt, FaUniversity, FaBuilding, FaBoxOpen} from "react-icons/fa";
-import { startProductChat } from "../api";
+import { FaUserCircle } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
 const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
     const navigate = useNavigate();
     //aws-work
@@ -29,6 +30,7 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
     const [reason, setReason] = useState("");
     const [reportType, setReportType] = useState("");
     const [reportMessage, setReportMessage] = useState("");
+    const location = useLocation();
     return (
         <Card
             className="border-0 shadow-sm h-100"
@@ -48,15 +50,41 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
             }}
         >
             <div
-                className="px-4 pt-3 pb-2"
+                className="px-4 pt-3 pb-2 d-flex align-items-center justify-content-center gap-2"
+
+                onClick={() => navigate(
+                    `/profile/${item.user._id || item.user}`,
+                    {
+                        state: {
+                            from:
+                                location.state?.from ||
+                                location.pathname
+                        }
+                    }
+                )}
+
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.color = "#8b6b4f";
+                }}
+
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.color = "#5a3e2b";
+                }}
+
                 style={{
                     color: "#5a3e2b",
                     fontWeight: "600",
                     fontSize: "14px",
-                    borderBottom: "1px solid #f1ece6"
+                    borderBottom: "1px solid #f1ece6",
+                    cursor: "pointer",
+                    transition: "0.2s ease"
                 }}
             >
-                {item.userName || "Unknown Seller"}
+                <FaUserCircle size={18} />
+
+                <span>
+        {item.userName || "Unknown Seller"}
+    </span>
             </div>
             <div
                 id={`carousel-featured-${item._id}`}
@@ -309,6 +337,9 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
                                 Fake Product
                             </option>
                             <option>
+                               Dangerous product
+                            </option>
+                            <option>
                                Bad Conditions
                             </option>
                             <option>
@@ -398,15 +429,11 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
                                         },
 
                                         body: JSON.stringify({
-
                                             title: item.title,
-
-                                            desc: reason||"No additional description",
-
+                                            desc: reason || "No additional description",
                                             tag: "ad",
-
-                                            type: reportType
-
+                                            type: reportType,
+                                            productId: item._id
                                         })
                                     }
                                 );
