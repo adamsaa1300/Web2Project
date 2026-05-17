@@ -9,16 +9,63 @@ export default function EditProfileModal({
                                              setUser,
                                          }) {
 
+    const emailDomain =
+        user.email?.includes("@gmail.com")
+            ? "@gmail.com"
+            : user.email?.includes("@sawweq.admin.com")
+                ? "@sawweq.admin.com"
+                : "@sawweq.com";
+
     const [form, setForm] = useState({
-        name: user.fullName || "",
-        location: user.location || "",
-        faculty: user.major || "",
-        university: user.university || "",
-        bio: user.bio || "",
+
+        name:
+            user.fullName &&
+            user.fullName !== "name"
+                ? user.fullName
+                : user.name || "",
+
+        location:
+            user.location &&
+            user.location !== "location"
+                ? user.location
+                : "",
+
+        faculty:
+            user.major &&
+            user.major !== "faculty"
+                ? user.major
+                : user.faculty || "",
+
+        university:
+            user.university &&
+            user.university !== "university"
+                ? user.university
+                : user.uni || "",
+
+        birthDate:
+            user.birthDate || "",
+
         emailUsername:
-            user.email?.replace("@sawweq.com", "") || "",
+            user.email?.split("@")[0] || "",
     });
+
     const [message, setMessage] = useState("");
+
+    const profileIncomplete =
+
+        !user.name &&
+        !user.fullName ||
+
+        !user.location ||
+
+        !user.faculty &&
+        !user.major ||
+
+        !user.uni &&
+        !user.university ||
+
+        !user.birthDate;
+
     const handleChange = (e) => {
 
         setForm({
@@ -27,19 +74,61 @@ export default function EditProfileModal({
         });
 
     };
+
     const handleSave = async () => {
+
+        const invalidValues = [
+            "location",
+            "faculty",
+            "university",
+        ];
+
+        if (
+            !form.name.trim() ||
+            !form.emailUsername.trim() ||
+            !form.location.trim() ||
+            !form.faculty.trim() ||
+            !form.university.trim() ||
+            !form.birthDate.trim() ||
+
+            invalidValues.includes(
+                form.location.toLowerCase()
+            ) ||
+
+            invalidValues.includes(
+                form.faculty.toLowerCase()
+            ) ||
+
+            invalidValues.includes(
+                form.university.toLowerCase()
+            )
+        ) {
+
+            setMessage(
+                "Please enter valid information"
+            );
+
+            return;
+
+        }
 
         try {
 
-            const res = await axios.put(
+            await axios.put(
                 `http://localhost:5000/api/users/${user.id}`,
                 {
                     name: form.name,
+
                     location: form.location,
+
                     faculty: form.faculty,
+
                     uni: form.university,
-                    bio: form.bio,
-                    email: `${form.emailUsername}@sawweq.com`,
+
+                    birthDate: form.birthDate,
+
+                    email:
+                        `${form.emailUsername}${emailDomain}`,
                 },
                 {
                     headers: {
@@ -63,33 +152,22 @@ export default function EditProfileModal({
                 university: form.university,
                 uni: form.university,
 
-                bio: form.bio,
+                birthDate: form.birthDate,
 
-                email: `${form.emailUsername}@sawweq.com`,
+                email:
+                    `${form.emailUsername}${emailDomain}`,
             };
 
             setUser(updatedUser);
 
             sessionStorage.setItem(
                 "user",
-                JSON.stringify({
-                    ...JSON.parse(sessionStorage.getItem("user")),
-
-                    name: form.name,
-
-                    location: form.location,
-
-                    faculty: form.faculty,
-
-                    uni: form.university,
-
-                    bio: form.bio,
-
-                    email: `${form.emailUsername}@sawweq.com`,
-                })
+                JSON.stringify(updatedUser)
             );
 
-            setMessage("Profile updated successfully!");
+            setMessage(
+                "Profile updated successfully!"
+            );
 
             setTimeout(() => {
 
@@ -118,15 +196,30 @@ export default function EditProfileModal({
 
         <Modal
             show={show}
-            onHide={handleClose}
+            onHide={
+                profileIncomplete
+                    ? undefined
+                    : handleClose
+            }
+            backdrop={
+                profileIncomplete
+                    ? "static"
+                    : true
+            }
+            keyboard={!profileIncomplete}
             centered
         >
 
-            <Modal.Header closeButton>
-                <Modal.Title>Edit Profile</Modal.Title>
+            <Modal.Header closeButton={!profileIncomplete}>
+
+                <Modal.Title>
+                    Complete Your Profile
+                </Modal.Title>
+
             </Modal.Header>
 
             <Modal.Body>
+
                 {message && (
 
                     <div
@@ -140,16 +233,18 @@ export default function EditProfileModal({
                             fontSize: ".95rem",
                         }}
                     >
-                        <i className="bi bi-check-circle-fill me-2" />
-
                         {message}
                     </div>
 
                 )}
+
                 <Form>
 
                     <Form.Group className="mb-3">
-                        <Form.Label>Name</Form.Label>
+
+                        <Form.Label>
+                            Name
+                        </Form.Label>
 
                         <Form.Control
                             name="name"
@@ -158,10 +253,14 @@ export default function EditProfileModal({
                             onChange={handleChange}
                             style={inputStyle}
                         />
+
                     </Form.Group>
+
                     <Form.Group className="mb-3">
 
-                        <Form.Label>Email</Form.Label>
+                        <Form.Label>
+                            Email
+                        </Form.Label>
 
                         <div style={{ display: "flex" }}>
 
@@ -191,19 +290,34 @@ export default function EditProfileModal({
                                     fontWeight: "600"
                                 }}
                             >
-                                @sawweq.com
+                                {emailDomain}
                             </div>
 
                         </div>
 
+                        <div
+                            style={{
+                                fontSize: "12px",
+                                color: "#8b6b4f",
+                                marginTop: "6px",
+                                marginLeft: "4px",
+                            }}
+                        >
+                            Enter only your username
+                            without {emailDomain}
+                        </div>
+
                     </Form.Group>
+
                     <Row>
 
                         <Col md={6}>
 
                             <Form.Group className="mb-3">
 
-                                <Form.Label>Location</Form.Label>
+                                <Form.Label>
+                                    Location
+                                </Form.Label>
 
                                 <Form.Select
                                     name="location"
@@ -211,7 +325,10 @@ export default function EditProfileModal({
                                     onChange={handleChange}
                                     style={inputStyle}
                                 >
-                                    <option value="">Select location</option>
+
+                                    <option value="">
+                                        Select location
+                                    </option>
 
                                     <option>Nablus</option>
                                     <option>Ramallah</option>
@@ -233,7 +350,9 @@ export default function EditProfileModal({
 
                             <Form.Group className="mb-3">
 
-                                <Form.Label>Faculty</Form.Label>
+                                <Form.Label>
+                                    Faculty
+                                </Form.Label>
 
                                 <Form.Select
                                     name="faculty"
@@ -242,7 +361,9 @@ export default function EditProfileModal({
                                     style={inputStyle}
                                 >
 
-                                    <option value="">Select faculty</option>
+                                    <option value="">
+                                        Select faculty
+                                    </option>
 
                                     <option>Medicine</option>
                                     <option>Engineering</option>
@@ -262,7 +383,9 @@ export default function EditProfileModal({
 
                     <Form.Group className="mb-3">
 
-                        <Form.Label>University</Form.Label>
+                        <Form.Label>
+                            University
+                        </Form.Label>
 
                         <Form.Select
                             name="university"
@@ -271,7 +394,9 @@ export default function EditProfileModal({
                             style={inputStyle}
                         >
 
-                            <option value="">Select university</option>
+                            <option value="">
+                                Select university
+                            </option>
 
                             <option>
                                 Palestine University
@@ -293,18 +418,38 @@ export default function EditProfileModal({
 
                     </Form.Group>
 
+                    <Form.Group className="mb-3">
+
+                        <Form.Label>
+                            Birth Date
+                        </Form.Label>
+
+                        <Form.Control
+                            type="date"
+                            name="birthDate"
+                            value={form.birthDate}
+                            onChange={handleChange}
+                            style={inputStyle}
+                        />
+
+                    </Form.Group>
+
                 </Form>
 
             </Modal.Body>
 
             <Modal.Footer>
 
-                <Button
-                    variant="secondary"
-                    onClick={handleClose}
-                >
-                    Cancel
-                </Button>
+                {!profileIncomplete && (
+
+                    <Button
+                        variant="secondary"
+                        onClick={handleClose}
+                    >
+                        Cancel
+                    </Button>
+
+                )}
 
                 <Button
                     onClick={handleSave}

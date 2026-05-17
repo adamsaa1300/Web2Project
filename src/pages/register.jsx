@@ -272,7 +272,20 @@ const Register = () => {
                             </div>
                         )}
 
-                    </Form.Group>
+
+    <div
+        style={{
+            fontSize: "12px",
+            color: "#8b6b4f",
+            marginTop: "6px",
+            marginLeft: "4px",
+        }}
+    >
+        Enter only your username without
+        @sawweq.com
+    </div>
+
+</Form.Group>
 
                     <Row>
                         <Col md={6}>

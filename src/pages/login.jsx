@@ -91,7 +91,27 @@ const Login = () => {
                 "role",
                 response.data.user.role
             );
-            navigate("/home");
+            const user = response.data.user;
+
+            const missingFields =
+                !user.uni ||
+                !user.faculty ||
+                !user.location ||
+                !user.birthDate;
+
+            if (missingFields) {
+
+                navigate("/profile", {
+                    state: {
+                        openCompleteProfile: true
+                    }
+                });
+
+            } else {
+
+                navigate("/home");
+
+            }
         } catch (err) {
             console.log(err);
            // alert("Google login failed");

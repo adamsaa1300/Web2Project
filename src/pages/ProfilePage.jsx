@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useLocation} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import EditProfileModal from "../../src/components/profile/editprofile.jsx";
@@ -41,6 +41,7 @@ const shellCard = {
 export default function ProfilePage() {
 
   const navigate = useNavigate();
+  const location = useLocation();
   useEffect(() => {
 
     const token =
@@ -57,6 +58,17 @@ export default function ProfilePage() {
   console.log("CURRENT USER:", currentUser);
   const [listings, setListings] = useState([]);
   const [showEdit, setShowEdit] = useState(false);
+  useEffect(() => {
+
+    if (
+        location.state?.openCompleteProfile
+    ) {
+
+      setShowEdit(true);
+
+    }
+
+  }, [location]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [listingToDelete, setListingToDelete] = useState(null);
   const [showListingEdit, setShowListingEdit] = useState(false);
