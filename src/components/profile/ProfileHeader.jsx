@@ -4,6 +4,7 @@ export default function ProfileHeader({
                                           colors,
                                           shellCard,
                                           onEdit,
+                                          isPublic,
                                       }){
 
     return (
@@ -96,7 +97,7 @@ export default function ProfileHeader({
                                 </div>
 
                             </div>
-
+                            {!isPublic && (
                             <button
                                 onMouseEnter={(e) => {
                                     e.target.style.backgroundColor = "#e6d3b3"
@@ -119,7 +120,7 @@ export default function ProfileHeader({
                                 <i className="bi bi-pencil-square me-2" />
                                 Edit Profile
                             </button>
-
+                            )}
                         </div>
 
 

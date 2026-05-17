@@ -1,16 +1,44 @@
 import { theme } from "../../../theme"
 import { useState, useEffect } from 'react'
 import { Table, Badge, Button, Modal } from 'react-bootstrap'
-import { getAds, deleteAd } from '../../../api'
-import { useNavigate } from "react-router-dom"
+import axios from "axios"
+import {
+    useNavigate,
+    useLocation
+} from "react-router-dom"
 export default function AdsPage() {
     const [ads, setAds] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [modalMsg, setModalMsg] = useState('')
     const [pendingAction, setPendingAction] = useState(null)
     const navigate = useNavigate()
+    const location = useLocation()
     useEffect(() => {
-        getAds().then(data => setAds(data))
+        const fetchAds = async () => {
+
+            try {
+
+                const res = await axios.get(
+                    "http://localhost:5000/api/products",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${sessionStorage.getItem("token")}`
+                        }
+                    }
+                );
+
+                setAds(res.data);
+
+            } catch (err) {
+
+                console.log(err);
+
+            }
+
+        };
+
+        fetchAds();
     }, [])
 
     const getStatusBg = (status) => {
@@ -40,7 +68,15 @@ export default function AdsPage() {
 
     const handleDelete = (id) => {
         confirm('are you sure you want to delete this ad ?', async () => {
-            await deleteAd(id)
+            await axios.delete(
+                `http://localhost:5000/api/products/${id}`,
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${sessionStorage.getItem("token")}`
+                    }
+                }
+            )
             setAds(prev => prev.filter(a => a._id !== id))
         })
     }
@@ -67,7 +103,8 @@ export default function AdsPage() {
                                 <td
                                     onClick={() => navigate("/search", {
                                         state: {
-                                            selectedProductId: ad._id
+                                            selectedProductId: ad._id,
+                                            from: location.pathname
                                         }
                                     })}
 
@@ -78,15 +115,7 @@ export default function AdsPage() {
                                     onMouseLeave={(e) => {
                                         e.currentTarget.style.color = theme.textPrimary
                                     }}
-                                    style={{padding: '12px 16px', fontSize: '13px', color: theme.textPrimary, verticalAlign: 'middle', cursor: 'pointer', transition: '0.2s ease', fontWeight: '750'}}>{ad.title}</td>
-                                <td
-                                    onClick={() => navigate(`/profile/${ad.user}`)}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.color = "#8b6b4f"
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.color = theme.textPrimary
-                                    }}
+
                                     style={{
                                         padding: '12px 16px',
                                         fontSize: '13px',
@@ -95,7 +124,40 @@ export default function AdsPage() {
                                         cursor: 'pointer',
                                         transition: '0.2s ease',
                                         fontWeight: '750'
-                                    }}>{ad.userName || "Unknown User"}</td>
+                                    }}
+                                >
+                                    {ad.title}
+                                </td>
+
+                                <td
+                                    onClick={() =>
+                                        navigate(`/profile/${ad.user}`, {
+                                            state: {
+                                                from: location.pathname
+                                            }
+                                        })
+                                    }
+
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.color = "#8b6b4f"
+                                    }}
+
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.color = theme.textPrimary
+                                    }}
+
+                                    style={{
+                                        padding: '12px 16px',
+                                        fontSize: '13px',
+                                        color: theme.textPrimary,
+                                        verticalAlign: 'middle',
+                                        cursor: 'pointer',
+                                        transition: '0.2s ease',
+                                        fontWeight: '750'
+                                    }}
+                                >
+                                    {ad.userName || "Unknown User"}
+                                </td>
                                 <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle',  fontWeight: '650' }}>{ad.category}</td>
                                 <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle',  fontWeight: '650' }}>{ad.price}</td>
                                 <td style={{ padding: '12px 16px', verticalAlign: 'middle' ,  fontWeight: '650'}}>

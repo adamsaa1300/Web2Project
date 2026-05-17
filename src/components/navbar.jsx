@@ -87,7 +87,7 @@ const Navbar = () => {
     sessionStorage.removeItem("unsavedAd");
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("user");
-
+       sessionStorage.removeItem("role");
     navigate("/login");
 }
     const renderTooltip = (text) => (

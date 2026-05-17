@@ -27,7 +27,6 @@ export default function EditProfileModal({
         });
 
     };
-
     const handleSave = async () => {
 
         try {
@@ -41,6 +40,12 @@ export default function EditProfileModal({
                     uni: form.university,
                     bio: form.bio,
                     email: `${form.emailUsername}@sawweq.com`,
+                },
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${sessionStorage.getItem("token")}`
+                    }
                 }
             );
 
@@ -83,6 +88,7 @@ export default function EditProfileModal({
                     email: `${form.emailUsername}@sawweq.com`,
                 })
             );
+
             setMessage("Profile updated successfully!");
 
             setTimeout(() => {
@@ -92,7 +98,6 @@ export default function EditProfileModal({
                 setMessage("");
 
             }, 1000);
-
 
         } catch (err) {
 

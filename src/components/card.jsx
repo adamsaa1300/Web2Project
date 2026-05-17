@@ -3,12 +3,14 @@ import { Card, Button ,Modal,Form} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import {FaMapMarkerAlt, FaUniversity, FaBuilding, FaBoxOpen} from "react-icons/fa";
 import { FaUserCircle } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
 const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
     const navigate = useNavigate();
     const [showReport, setShowReport] = useState(false);
     const [reason, setReason] = useState("");
     const [reportType, setReportType] = useState("");
     const [reportMessage, setReportMessage] = useState("");
+    const location = useLocation();
     return (
         <Card
             className="border-0 shadow-sm h-100"
@@ -30,7 +32,16 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
             <div
                 className="px-4 pt-3 pb-2 d-flex align-items-center justify-content-center gap-2"
 
-                onClick={() => navigate(`/profile/${item.user}`)}
+                onClick={() => navigate(
+                    `/profile/${item.user._id || item.user}`,
+                    {
+                        state: {
+                            from:
+                                location.state?.from ||
+                                location.pathname
+                        }
+                    }
+                )}
 
                 onMouseEnter={(e) => {
                     e.currentTarget.style.color = "#8b6b4f";
@@ -213,7 +224,16 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
                     )}
                 </div>
                 <Button
-                    onClick={() => navigate(`/chat/${item.user}`)}
+                    onClick={() => navigate(
+                        `/profile/${item.user._id || item.user}`,
+                        {
+                            state: {
+                                from:
+                                    location.state?.from ||
+                                    location.pathname
+                            }
+                        }
+                    )}
                     className="mt-2 border-0 fw-semibold"
                     style={{
                         backgroundColor: "#5a3e2b",

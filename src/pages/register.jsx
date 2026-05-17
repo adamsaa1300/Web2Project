@@ -98,7 +98,10 @@ const Register = () => {
                     "user",
                     JSON.stringify(response.data.user)
                 );
-
+                sessionStorage.setItem(
+                    "role",
+                    response.data.user.role
+                );
                 navigate("/home");
 
             } catch (err) {

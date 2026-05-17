@@ -39,7 +39,20 @@ const shellCard = {
 };
 
 export default function ProfilePage() {
+
   const navigate = useNavigate();
+  useEffect(() => {
+
+    const token =
+        sessionStorage.getItem("token");
+
+    if (!token) {
+
+      navigate("/login");
+
+    }
+
+  }, []);
   const currentUser = getCurrentUser();
   console.log("CURRENT USER:", currentUser);
   const [listings, setListings] = useState([]);

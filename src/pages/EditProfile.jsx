@@ -1,8 +1,24 @@
 import React, { useState } from "react";
-
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 export default function EditProfile() {
   const currentUser = JSON.parse(sessionStorage.getItem("user"));
+  const navigate = useNavigate();
+  useEffect(() => {
 
+    const token =
+        sessionStorage.getItem("token");
+    axios.put(
+        `/api/users/${currentUser.id}`
+    )
+    if (!token) {
+
+      navigate("/login");
+
+    }
+
+  }, []);
   const [formData, setFormData] = useState({
     name: currentUser?.name || "",
     email: currentUser?.email || "",

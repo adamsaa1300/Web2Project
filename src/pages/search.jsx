@@ -3,6 +3,7 @@ import { Container, Row, Col, Button, Form, Card, Spinner } from "react-bootstra
 import { useNavigate, useLocation } from "react-router-dom";
 import ProductCard from "../components/card.jsx";
 import Filters from "../components/filters.jsx";
+
 const Search = () => {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -13,11 +14,14 @@ const Search = () => {
         university: "",
         price: ""
     });
+
     const [hasSearched, setHasSearched] = useState(false);
     const [selectedImages, setSelectedImages] = useState([]);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const navigate = useNavigate();
     const location = useLocation();
+    const from =
+        location.state?.from;
     useEffect(() => {//redirect to log in if not logged
 
         const token = sessionStorage.getItem("token");
@@ -114,7 +118,28 @@ const Search = () => {
 
     return (
         <div style={{ backgroundColor: "#f6f1eb", minHeight: "100vh", padding: "20px" }}>
+            {from&& (
 
+                <button
+                    onClick={() => navigate(from)}
+                    className="btn mb-4"
+                    style={{
+                        background: "#f2e8dc",
+                        color: "#7b5647",
+                        border: "1px solid #e7d9cb",
+                        borderRadius: "12px",
+                        fontWeight: 600,
+                        padding: "8px 16px",
+                    }}
+                >
+
+                    <i className="bi bi-arrow-left me-2" />
+
+                    Back
+
+                </button>
+
+            )}
             {!location.state?.selectedProductId && (
                 <>
                     <Filters
@@ -180,7 +205,7 @@ const Search = () => {
                     }}
                 >
 
-                    {/* CLOSE */}
+
                     <button
                         onClick={() => {
                             setSelectedImages([]);
@@ -203,7 +228,7 @@ const Search = () => {
                         ×
                     </button>
 
-                    {/* PREVIOUS */}
+
                     {selectedImages.length > 1 && (
                         <button
                             onClick={() =>
@@ -229,7 +254,7 @@ const Search = () => {
                         </button>
                     )}
 
-                    {/* IMAGE */}
+
                     <img
                         src={selectedImages[selectedIndex]}
                         alt=""
@@ -241,7 +266,7 @@ const Search = () => {
                         }}
                     />
 
-                    {/* NEXT */}
+
                     {selectedImages.length > 1 && (
                         <button
                             onClick={() =>
