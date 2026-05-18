@@ -243,14 +243,21 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
             </span>
                     )}
                 </div>
-                
+
                 <Button
                     onClick={handleStartChat}
                     className="mt-2 border-0 fw-semibold"
+                    onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = "#7b5647";
+                    }}
+                    onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = "#5a3e2b";
+                    }}
                     style={{
                         backgroundColor: "#5a3e2b",
                         borderRadius: "14px",
-                        padding: "12px"
+                        padding: "12px",
+                        transition: "0.2s ease",
                     }}
                 >
                     Start Chat

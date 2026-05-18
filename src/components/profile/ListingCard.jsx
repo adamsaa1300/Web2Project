@@ -207,12 +207,19 @@ export default function ListingCard({
                         <button
                             onClick={() => onEdit(item)}
                             className="btn flex-fill fw-semibold"
+                            onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = "#d6c0aa";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = "#e8d8c7";
+                            }}
                             style={{
                                 backgroundColor: "#e8d8c7",
                                 color: "#5a3e2b",
                                 borderRadius: "14px",
                                 padding: "12px",
                                 border: "none",
+                                transition: "0.2s ease",
                             }}
                         >
                             Edit
@@ -221,12 +228,19 @@ export default function ListingCard({
                         <button
                             onClick={() => onDelete(item.id)}
                             className="btn flex-fill fw-semibold"
+                            onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = "#dfb8b2";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = "#f4d7d3";
+                            }}
                             style={{
                                 backgroundColor: "#f4d7d3",
                                 color: "#8b2e2e",
                                 borderRadius: "14px",
                                 padding: "12px",
                                 border: "none",
+                                transition: "0.2s ease",
                             }}
                         >
                             Delete
