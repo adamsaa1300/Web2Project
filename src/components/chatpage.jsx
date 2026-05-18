@@ -1,190 +1,328 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  getProductChat,
+  getProductChatsByUser,
+  sendProductChatMessage,
+} from "../api";
 
 function ChatPage() {
-  // Store the selected chat id
-  const [activeChatId, setActiveChatId] = useState(1);
+  // Get chat id from URL
+  const { chatId } = useParams();
+  const navigate = useNavigate();
 
-  // Temporary chat data, later we can get it from backend
-  const chats = [
-    {
-      id: 1,
-      name: "أحمد",
-      avatar: "أ",
-      color: "#5a3e2b",
-      status: "متصل الآن",
-      messages: [
-        { from: "him", text: "السلام عليكم", time: "10:00" },
-        { from: "me", text: "وعليكم السلام", time: "10:01" },
-      ],
-    },
-    {
-      id: 2,
-      name: "محمد",
-      avatar: "م",
-      color: "#8b6f47",
-      status: "آخر ظهور قبل 5 دقائق",
-      messages: [
-        { from: "him", text: "مرحبا", time: "9:30" },
-        { from: "me", text: "أهلًا وسهلًا", time: "9:31" },
-      ],
-    },
-    {
-      id: 3,
-      name: "سارة",
-      avatar: "س",
-      color: "#b08a5a",
-      status: "متصلة",
-      messages: [
-        { from: "him", text: "كيفك؟", time: "8:45" },
-        { from: "me", text: "تمام الحمد لله", time: "8:46" },
-      ],
-    },
-  ];
+  // Store all chats for the current user
+  const [chats, setChats] = useState([]);
 
-  // Find the chat that matches the selected id
-  const activeChat = chats.find((chat) => chat.id === activeChatId);
+  // Store the selected chat
+  const [chat, setChat] = useState(null);
+
+  // Store search text
+  const [search, setSearch] = useState("");
+
+  // Store typed message
+  const [message, setMessage] = useState("");
+
+  // Get logged in user
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const currentUserId = user?._id || user?.id;
+
+  // Load all chats where the current user is buyer or seller
+  useEffect(() => {
+    const loadUserChats = async () => {
+      try {
+        if (!currentUserId) return;
+
+        const data = await getProductChatsByUser(currentUserId);
+
+        if (Array.isArray(data)) {
+          setChats(data);
+
+          // If user opens /chat without chatId, open first chat automatically
+          if (!chatId && data.length > 0) {
+            navigate(`/chat/${data[0]._id}`);
+          }
+        } else {
+          setChats([]);
+        }
+      } catch (err) {
+        console.log(err);
+        alert("Cannot load chats");
+      }
+    };
+
+    loadUserChats();
+  }, [currentUserId, chatId, navigate]);
+
+  // Load selected chat from backend
+  useEffect(() => {
+    const loadChat = async () => {
+      try {
+        if (!chatId) return;
+
+        const data = await getProductChat(chatId);
+
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+        setChat(data);
+      } catch (err) {
+        console.log(err);
+        alert("Cannot load chat");
+      }
+    };
+
+    loadChat();
+  }, [chatId]);
+
+  const handleSelectChat = (selectedChatId) => {
+    navigate(`/chat/${selectedChatId}`);
+  };
+
+  const handleSendMessage = async () => {
+    try {
+      if (message.trim() === "") return;
+
+      if (!currentUserId) {
+        alert("User id not found. Please login again.");
+        return;
+      }
+
+      const data = await sendProductChatMessage(chatId, currentUserId, message);
+
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
+
+      setChat(data);
+      setMessage("");
+
+      // Refresh sidebar after sending message
+      const updatedChats = await getProductChatsByUser(currentUserId);
+
+      if (Array.isArray(updatedChats)) {
+        setChats(updatedChats);
+      }
+    } catch (err) {
+      console.log(err);
+      alert("Message not sent");
+    }
+  };
+
+  const getBuyerId = (chatItem) => {
+    return typeof chatItem.buyer === "object"
+      ? chatItem.buyer._id
+      : chatItem.buyer;
+  };
+
+  const getSellerId = (chatItem) => {
+    return typeof chatItem.seller === "object"
+      ? chatItem.seller._id
+      : chatItem.seller;
+  };
+
+  const getMyRole = (chatItem) => {
+    const buyerId = getBuyerId(chatItem);
+    const sellerId = getSellerId(chatItem);
+
+    if (buyerId === currentUserId) return "Buyer";
+    if (sellerId === currentUserId) return "Seller";
+
+    return "User";
+  };
+
+  const getOtherUser = (chatItem) => {
+    if (!chatItem) return null;
+
+    const buyerId = getBuyerId(chatItem);
+
+    return buyerId === currentUserId ? chatItem.seller : chatItem.buyer;
+  };
+
+  const getOtherUserName = (chatItem) => {
+    const otherUser = getOtherUser(chatItem);
+    return otherUser?.name || otherUser?.email || "User";
+  };
+
+  const filteredChats = chats.filter((chatItem) => {
+    const otherUserName = getOtherUserName(chatItem).toLowerCase();
+    const productTitle = chatItem.product?.title?.toLowerCase() || "";
+
+    return (
+      otherUserName.includes(search.toLowerCase()) ||
+      productTitle.includes(search.toLowerCase())
+    );
+  });
+
+  if (!currentUserId) {
+    return <div style={styles.loading}>Please login first</div>;
+  }
 
   return (
     <div style={styles.page} dir="rtl">
-      {/* Sidebar shows all chats */}
-      <Sidebar
-        chats={chats}
-        activeChatId={activeChatId}
-        setActiveChatId={setActiveChatId}
-      />
+      <aside style={styles.sidebar}>
+        <h2 style={styles.sidebarTitle}>الرسائل</h2>
 
-      {/* ChatWindow shows the selected chat */}
-      <ChatWindow chat={activeChat} />
+        <input
+          type="text"
+          placeholder="بحث في المحادثات..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={styles.searchInput}
+        />
+
+        <div style={styles.chatList}>
+          {filteredChats.length > 0 ? (
+            filteredChats.map((chatItem) => {
+              const otherUserName = getOtherUserName(chatItem);
+              const myRole = getMyRole(chatItem);
+
+              const lastMessage =
+                chatItem.messages?.[chatItem.messages.length - 1]?.text ||
+                "لا توجد رسائل بعد";
+
+              return (
+                <button
+                  key={chatItem._id}
+                  onClick={() => handleSelectChat(chatItem._id)}
+                  style={{
+                    ...styles.chatItem,
+                    ...(chatId === chatItem._id ? styles.activeChat : {}),
+                  }}
+                >
+                  <div style={styles.avatar}>{otherUserName.charAt(0)}</div>
+
+                  <div style={styles.chatInfo}>
+                    <h6 style={styles.chatName}>{otherUserName}</h6>
+
+                    <p style={styles.productName}>
+                      {chatItem.product?.title || "Product"}
+                    </p>
+
+                    <span
+                      style={{
+                        ...styles.roleBadge,
+                        ...(myRole === "Buyer"
+                          ? styles.buyerBadge
+                          : styles.sellerBadge),
+                      }}
+                    >
+                      {myRole}
+                    </span>
+
+                    <p style={styles.lastMessage}>{lastMessage}</p>
+                  </div>
+                </button>
+              );
+            })
+          ) : (
+            <p style={styles.noMessages}>لا توجد محادثات بعد</p>
+          )}
+        </div>
+      </aside>
+
+      {!chat ? (
+        <main style={styles.chatWindow}>
+          <div style={styles.emptyChat}>اختر محادثة من القائمة</div>
+        </main>
+      ) : (
+        <ChatWindow
+          chat={chat}
+          currentUserId={currentUserId}
+          message={message}
+          setMessage={setMessage}
+          handleSendMessage={handleSendMessage}
+          getOtherUserName={getOtherUserName}
+          getMyRole={getMyRole}
+        />
+      )}
     </div>
   );
 }
 
-function Sidebar({ chats, activeChatId, setActiveChatId }) {
-  // Store the search input value
-  const [search, setSearch] = useState("");
-
-  // Filter chats based on the search text
-  const filteredChats = chats.filter((chat) =>
-    chat.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  return (
-    <aside style={styles.sidebar}>
-      <h2 style={styles.sidebarTitle}>الرسائل</h2>
-
-      {/* Search input for chats */}
-      <input
-        type="text"
-        placeholder="بحث في المحادثات..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        style={styles.searchInput}
-      />
-
-      <div style={styles.chatList}>
-        {filteredChats.map((chat) => (
-          <button
-            key={chat.id}
-            onClick={() => setActiveChatId(chat.id)}
-            style={{
-              ...styles.chatItem,
-              // Apply active style if this chat is selected
-              ...(activeChatId === chat.id ? styles.activeChat : {}),
-            }}
-          >
-            <div style={{ ...styles.avatar, backgroundColor: chat.color }}>
-              {chat.avatar}
-            </div>
-
-            <div style={styles.chatInfo}>
-              <h6 style={styles.chatName}>{chat.name}</h6>
-
-              {/* Show the last message in the chat */}
-              <p style={styles.lastMessage}>
-                {chat.messages[chat.messages.length - 1]?.text}
-              </p>
-            </div>
-          </button>
-        ))}
-      </div>
-    </aside>
-  );
-}
-
-function ChatWindow({ chat }) {
-  // Store the message typed by the user
-  const [message, setMessage] = useState("");
-
-  // Store messages of the current chat
-  const [messages, setMessages] = useState(chat.messages);
-
-  // Update messages when the selected chat changes
-  useEffect(() => {
-    setMessages(chat.messages);
-  }, [chat]);
-
-  function sendMessage() {
-    // Do not send empty messages
-    if (message.trim() === "") return;
-
-    // Add the new message to the messages list
-    setMessages([
-      ...messages,
-      {
-        from: "me",
-        text: message,
-        time: "الآن",
-      },
-    ]);
-
-    // Clear input after sending
-    setMessage("");
-  }
+function ChatWindow({
+  chat,
+  currentUserId,
+  message,
+  setMessage,
+  handleSendMessage,
+  getOtherUserName,
+  getMyRole,
+}) {
+  const otherUserName = getOtherUserName(chat);
+  const productTitle = chat.product?.title || "Product";
+  const myRole = getMyRole(chat);
 
   return (
     <main style={styles.chatWindow}>
-      {/* Chat header with user info */}
       <div style={styles.chatHeader}>
-        <div style={{ ...styles.avatar, backgroundColor: chat.color }}>
-          {chat.avatar}
-        </div>
+        <div style={styles.avatar}>{otherUserName.charAt(0)}</div>
 
         <div>
-          <h6 style={styles.headerName}>{chat.name}</h6>
-          <p style={styles.status}>{chat.status}</p>
+          <h6 style={styles.headerName}>{otherUserName}</h6>
+
+          <p style={styles.status}>
+            بخصوص: {productTitle}
+          </p>
+
+          <span
+            style={{
+              ...styles.roleBadge,
+              ...(myRole === "Buyer" ? styles.buyerBadge : styles.sellerBadge),
+            }}
+          >
+            You are {myRole}
+          </span>
         </div>
       </div>
 
-      {/* Messages display area */}
       <div style={styles.messagesArea}>
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            style={{
-              ...styles.message,
-              // Use different style for my messages and other messages
-              ...(msg.from === "me" ? styles.myMessage : styles.hisMessage),
-            }}
-          >
-            <p style={styles.messageText}>{msg.text}</p>
-            <span style={styles.messageTime}>{msg.time}</span>
-          </div>
-        ))}
+        {chat.messages && chat.messages.length > 0 ? (
+          chat.messages.map((msg, index) => {
+            const senderId =
+              typeof msg.sender === "object" ? msg.sender._id : msg.sender;
+
+            const isMyMessage = senderId === currentUserId;
+
+            return (
+              <div
+                key={msg._id || index}
+                style={{
+                  ...styles.message,
+                  ...(isMyMessage ? styles.myMessage : styles.hisMessage),
+                }}
+              >
+                <p style={styles.messageText}>{msg.text}</p>
+
+                <span style={styles.messageTime}>
+                  {msg.createdAt
+                    ? new Date(msg.createdAt).toLocaleTimeString()
+                    : ""}
+                </span>
+              </div>
+            );
+          })
+        ) : (
+          <p style={styles.noMessages}>
+            لا توجد رسائل بعد، ابدأ المحادثة الآن.
+          </p>
+        )}
       </div>
 
-      {/* Message input area */}
       <div style={styles.inputArea}>
         <input
           type="text"
           placeholder="اكتب رسالتك هنا..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          // Send message when Enter is pressed
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
           style={styles.messageInput}
         />
 
-        <button onClick={sendMessage} style={styles.sendButton}>
+        <button onClick={handleSendMessage} style={styles.sendButton}>
           إرسال
         </button>
       </div>
@@ -192,7 +330,6 @@ function ChatWindow({ chat }) {
   );
 }
 
-// Styles are inside this file to keep the page simple
 const styles = {
   page: {
     height: "calc(100vh - 95px)",
@@ -205,9 +342,20 @@ const styles = {
     boxShadow: "0 8px 22px rgba(0,0,0,0.18)",
   },
 
+  loading: {
+    height: "calc(100vh - 95px)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#5a3e2b",
+    fontWeight: "700",
+    fontSize: "22px",
+    backgroundColor: "#fdf5ec",
+  },
+
   sidebar: {
-    width: "310px",
-    minWidth: "310px",
+    width: "320px",
+    minWidth: "320px",
     backgroundColor: "#f5e7d0",
     borderLeft: "1px solid #d2b48c",
     padding: "18px",
@@ -262,6 +410,7 @@ const styles = {
     width: "45px",
     height: "45px",
     borderRadius: "50%",
+    backgroundColor: "#5a3e2b",
     color: "white",
     fontWeight: "700",
     display: "flex",
@@ -276,14 +425,42 @@ const styles = {
   },
 
   chatName: {
-    margin: "0 0 5px",
+    margin: "0 0 4px",
     color: "#5a3e2b",
     fontWeight: "700",
   },
 
+  productName: {
+    margin: "0 0 4px",
+    color: "#8b6f47",
+    fontSize: "13px",
+    fontWeight: "600",
+  },
+
+  roleBadge: {
+    display: "inline-block",
+    fontSize: "11px",
+    fontWeight: "700",
+    padding: "3px 9px",
+    borderRadius: "999px",
+    marginBottom: "5px",
+  },
+
+  buyerBadge: {
+    backgroundColor: "#e6f4ec",
+    color: "#2d7a4f",
+    border: "1px solid #2d7a4f",
+  },
+
+  sellerBadge: {
+    backgroundColor: "#fef3de",
+    color: "#b07d1a",
+    border: "1px solid #b07d1a",
+  },
+
   lastMessage: {
     margin: 0,
-    fontSize: "14px",
+    fontSize: "13px",
     color: "#7a5a3a",
     whiteSpace: "nowrap",
     overflow: "hidden",
@@ -295,6 +472,16 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     backgroundColor: "#fdf5ec",
+  },
+
+  emptyChat: {
+    flexGrow: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#5a3e2b",
+    fontWeight: "700",
+    fontSize: "22px",
   },
 
   chatHeader: {
@@ -313,7 +500,7 @@ const styles = {
   },
 
   status: {
-    margin: 0,
+    margin: "0 0 5px",
     color: "#4d8b57",
     fontSize: "14px",
   },
@@ -356,6 +543,12 @@ const styles = {
   messageTime: {
     fontSize: "12px",
     opacity: 0.75,
+  },
+
+  noMessages: {
+    textAlign: "center",
+    color: "#7a5a3a",
+    marginTop: "20px",
   },
 
   inputArea: {

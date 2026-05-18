@@ -1,7 +1,7 @@
 import { theme } from "../../../theme"
 import { useState, useEffect } from 'react'
 import { Modal, ListGroup, Button } from 'react-bootstrap'
-import { getChats, getChat } from "../../../api"
+import axios from "axios"
 
 export default function ChatsPage() {
     const [chats, setChats]       = useState([])
@@ -9,15 +9,63 @@ export default function ChatsPage() {
     const [show, setShow]         = useState(false)
 
     useEffect(() => {
-        getChats().then(data => setChats(data))
+        const fetchChats = async () => {
+
+            try {
+
+                const res = await axios.get(
+                    "http://localhost:5000/api/chats",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${sessionStorage.getItem("token")}`
+                        }
+                    }
+                );
+
+                setChats(res.data);
+
+            } catch (err) {
+
+                console.log(err);
+
+            }
+
+        };
+
+        fetchChats();
     }, [])
 
-    const handleView = (id) => {
-        getChat(id).then(data => {
-            setSelected(data)
-            setShow(true)
-        })
-    }
+
+
+        const handleView = async (id) => {
+
+            try {
+
+                const res = await axios.get(
+                    `http://localhost:5000/api/chats/${id}`,
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${sessionStorage.getItem("token")}`
+                        }
+                    }
+                );
+
+                setSelected(res.data);
+
+                setShow(true);
+
+            } catch (err) {
+
+                console.log(err);
+
+            }
+
+        }
+
+    
+
 
     const getStatusBg = (status) => {
         if (status === 'active')  return '#e6f4ec'

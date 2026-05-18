@@ -25,7 +25,7 @@ const Home = () => {
         if (!token) {
             navigate("/login");//redirect to log in if not logged
         }
-    }, []);
+    }, [navigate]);
 
     useEffect(() => {
         const fetchProducts = async () => {

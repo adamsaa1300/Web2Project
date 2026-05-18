@@ -1,16 +1,44 @@
 import { theme } from "../../../theme"
 import { useState, useEffect } from 'react'
 import { Table, Badge, Button, Modal } from 'react-bootstrap'
-import { getAds, deleteAd } from '../../../api'
-
+import axios from "axios"
+import {
+    useNavigate,
+    useLocation
+} from "react-router-dom"
 export default function AdsPage() {
     const [ads, setAds] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [modalMsg, setModalMsg] = useState('')
     const [pendingAction, setPendingAction] = useState(null)
-
+    const navigate = useNavigate()
+    const location = useLocation()
     useEffect(() => {
-        getAds().then(data => setAds(data))
+        const fetchAds = async () => {
+
+            try {
+
+                const res = await axios.get(
+                    "http://localhost:5000/api/products",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${sessionStorage.getItem("token")}`
+                        }
+                    }
+                );
+
+                setAds(res.data);
+
+            } catch (err) {
+
+                console.log(err);
+
+            }
+
+        };
+
+        fetchAds();
     }, [])
 
     const getStatusBg = (status) => {
@@ -40,7 +68,15 @@ export default function AdsPage() {
 
     const handleDelete = (id) => {
         confirm('are you sure you want to delete this ad ?', async () => {
-            await deleteAd(id)
+            await axios.delete(
+                `http://localhost:5000/api/products/${id}`,
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${sessionStorage.getItem("token")}`
+                    }
+                }
+            )
             setAds(prev => prev.filter(a => a._id !== id))
         })
     }
@@ -50,7 +86,7 @@ export default function AdsPage() {
             <h4 style={{ color: theme.textPrimary, marginBottom: '20px' }}>Ads</h4>
 
             <div style={{ backgroundColor: theme.cardBg, borderRadius: theme.borderRadius.lg, border: `1px solid ${theme.border}`, overflow: 'hidden' }}>
-                <Table hover style={{ margin: 0, tableLayout: 'fixed', width: '100%' }}>
+                <Table  style={{ margin: 0, tableLayout: 'fixed', width: '100%' }}>
                     <thead>
                         <tr style={{ backgroundColor: theme.cardBg2 }}>
                             <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '200px' }}>Title</th>
@@ -64,11 +100,67 @@ export default function AdsPage() {
                     <tbody>
                         {ads.map(ad => (
                             <tr key={ad._id}>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textPrimary, verticalAlign: 'middle' }}>{ad.title}</td>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{ad.user}</td>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{ad.category}</td>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{ad.price}</td>
-                                <td style={{ padding: '12px 16px', verticalAlign: 'middle' }}>
+                                <td
+                                    onClick={() => navigate("/search", {
+                                        state: {
+                                            selectedProductId: ad._id,
+                                            from: location.pathname
+                                        }
+                                    })}
+
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.color = "#8b6b4f"
+                                    }}
+
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.color = theme.textPrimary
+                                    }}
+
+                                    style={{
+                                        padding: '12px 16px',
+                                        fontSize: '13px',
+                                        color: theme.textPrimary,
+                                        verticalAlign: 'middle',
+                                        cursor: 'pointer',
+                                        transition: '0.2s ease',
+                                        fontWeight: '750'
+                                    }}
+                                >
+                                    {ad.title}
+                                </td>
+
+                                <td
+                                    onClick={() =>
+                                        navigate(`/profile/${ad.user}`, {
+                                            state: {
+                                                from: location.pathname
+                                            }
+                                        })
+                                    }
+
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.color = "#8b6b4f"
+                                    }}
+
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.color = theme.textPrimary
+                                    }}
+
+                                    style={{
+                                        padding: '12px 16px',
+                                        fontSize: '13px',
+                                        color: theme.textPrimary,
+                                        verticalAlign: 'middle',
+                                        cursor: 'pointer',
+                                        transition: '0.2s ease',
+                                        fontWeight: '750'
+                                    }}
+                                >
+                                    {ad.userName || "Unknown User"}
+                                </td>
+                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle',  fontWeight: '650' }}>{ad.category}</td>
+                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle',  fontWeight: '650' }}>{ad.price}</td>
+                                <td style={{ padding: '12px 16px', verticalAlign: 'middle' ,  fontWeight: '650'}}>
                                     <span style={{
                                         padding: '3px 10px',
                                         borderRadius: '20px',
