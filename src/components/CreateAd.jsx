@@ -412,7 +412,7 @@ const handleCancel = () => {
                 Cancel
               </button>
               <button type="submit" className="btn flex-grow-1 py-2 fw-bold shadow text-white border-0" style={{ backgroundColor: Colors.btnPrimary }}>
-                Add Listing <FaArrowRight className="ms-2" size={14} />
+                Add Ad <FaArrowRight className="ms-2" size={14} />
               </button>
             </div>
           </div>
