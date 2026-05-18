@@ -34,7 +34,7 @@ const Navbar = () => {
     const handleClick = (page) => {
         if (page === "home") navigate("/");
         if (page === "login") navigate("/login");
-        if (page === "messages") navigate("/messages");
+        if (page === "messages") navigate("/chat");
         if (page === "addAd") navigate("/add-ad");
         if (page === "admin") navigate("/admin");
         if (page === "profile") navigate("/profile");
