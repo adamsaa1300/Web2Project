@@ -216,9 +216,7 @@ const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
                             minHeight: "55px"
                         }}
                     >
-                        {item.description?.length > 100
-                            ? item.description.slice(0, 100) + "..."
-                            : item.description}
+                    {item.description}
                     </div>
 
                 </div>
