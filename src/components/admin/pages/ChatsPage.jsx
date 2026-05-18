@@ -1,6 +1,6 @@
 import { theme } from "../../../theme"
 import { useState, useEffect } from 'react'
-import { Modal, ListGroup, Button } from 'react-bootstrap'
+import { Modal, ListGroup, Button, Table } from 'react-bootstrap'
 import axios from "axios"
 
 export default function ChatsPage() {
@@ -86,7 +86,7 @@ export default function ChatsPage() {
             <h4 style={{ color: theme.textPrimary, marginBottom: '20px' }}>Chats</h4>
 
             <div style={{ backgroundColor: theme.cardBg, borderRadius: theme.borderRadius.lg, border: `1px solid ${theme.border}`, overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+                <Table style={{ margin: 0, tableLayout: 'fixed', width: '100%' }}>
                     <thead>
                         <tr style={{ backgroundColor: theme.cardBg2 }}>
                             <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '180px' }}>User 1</th>
@@ -98,7 +98,7 @@ export default function ChatsPage() {
                     </thead>
                     <tbody>
                         {chats.map(chat => (
-                            <tr key={chat._id} style={{ borderBottom: `1px solid ${theme.border}` }}>
+                            <tr key={chat._id}>
                                 <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textPrimary, verticalAlign: 'middle' }}>{chat.user1}</td>
                                 <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{chat.user2}</td>
                                 <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{chat.subject}</td>
@@ -126,7 +126,7 @@ export default function ChatsPage() {
                             </tr>
                         ))}
                     </tbody>
-                </table>
+                </Table>
             </div>
 
             <Modal show={show} onHide={() => setShow(false)} centered>

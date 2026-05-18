@@ -1,6 +1,6 @@
 import { theme } from "../../../theme"
 import { useState, useEffect } from 'react'
-import { Button, Modal } from 'react-bootstrap'
+import { Table, Button, Modal } from 'react-bootstrap'
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 export default function ReportsPage() {
@@ -111,7 +111,7 @@ export default function ReportsPage() {
             <h4 style={{ color: theme.textPrimary, marginBottom: '20px' }}>Reports</h4>
 
             <div style={{ backgroundColor: theme.cardBg, borderRadius: theme.borderRadius.lg, border: `1px solid ${theme.border}`, overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+                <Table style={{ margin: 0, tableLayout: 'fixed', width: '100%' }}>
                     <thead>
                         <tr style={{ backgroundColor: theme.cardBg2 }}>
                             <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '80px' }}>Type</th>
@@ -124,7 +124,7 @@ export default function ReportsPage() {
                     </thead>
                     <tbody>
                         {reports.map(report => (
-                            <tr key={report._id} style={{ borderBottom: `1px solid ${theme.border}` }}>
+                            <tr key={report._id}>
                                 <td style={{ padding: '12px 16px', verticalAlign: 'middle' }}>
                                     <span style={{
                                         padding: '3px 10px',
@@ -188,7 +188,7 @@ export default function ReportsPage() {
                                             onClick={() => handleIgnore(report._id)}
                                             onMouseOver={e => e.currentTarget.style.filter = 'brightness(0.85)'}
                                             onMouseOut={e => e.currentTarget.style.filter = 'brightness(1)'}
-                                            style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '6px', border: 'none', backgroundColor: theme.cardBg2, color: theme.textMuted, cursor: 'pointer', fontWeight: '500' }}
+                                            style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '6px', border: 'none', backgroundColor: '#fdecea', color: theme.textMuted, cursor: 'pointer', fontWeight: '500' }}
                                         >Ignore</button>
                                         <button
                                             onClick={() => handleResolve(report._id)}
@@ -201,7 +201,7 @@ export default function ReportsPage() {
                             </tr>
                         ))}
                     </tbody>
-                </table>
+                </Table>
             </div>
 
             <Modal show={showModal} onHide={() => setShowModal(false)} centered>
