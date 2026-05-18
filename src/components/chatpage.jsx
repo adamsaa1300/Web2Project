@@ -20,6 +20,9 @@ function ChatPage() {
   // Store search text
   const [search, setSearch] = useState("");
 
+  // Filter chats by current user's role
+  const [roleFilter, setRoleFilter] = useState("Buyer");
+
   // Store typed message
   const [message, setMessage] = useState("");
 
@@ -38,9 +41,28 @@ function ChatPage() {
         if (Array.isArray(data)) {
           setChats(data);
 
-          // If user opens /chat without chatId, open first chat automatically
+          // If user opens /chat without chatId, open first chat that matches selected role
           if (!chatId && data.length > 0) {
-            navigate(`/chat/${data[0]._id}`);
+            const firstMatchingChat = data.find((chatItem) => {
+              const buyerId =
+                typeof chatItem.buyer === "object"
+                  ? chatItem.buyer?._id
+                  : chatItem.buyer;
+
+              const sellerId =
+                typeof chatItem.seller === "object"
+                  ? chatItem.seller?._id
+                  : chatItem.seller;
+
+              if (roleFilter === "Buyer") return buyerId === currentUserId;
+              if (roleFilter === "Seller") return sellerId === currentUserId;
+
+              return false;
+            });
+
+            if (firstMatchingChat) {
+              navigate(`/chat/${firstMatchingChat._id}`);
+            }
           }
         } else {
           setChats([]);
@@ -52,7 +74,7 @@ function ChatPage() {
     };
 
     loadUserChats();
-  }, [currentUserId, chatId, navigate]);
+  }, [currentUserId, chatId, navigate, roleFilter]);
 
   // Load selected chat from backend
   useEffect(() => {
@@ -114,13 +136,13 @@ function ChatPage() {
 
   const getBuyerId = (chatItem) => {
     return typeof chatItem.buyer === "object"
-      ? chatItem.buyer._id
+      ? chatItem.buyer?._id
       : chatItem.buyer;
   };
 
   const getSellerId = (chatItem) => {
     return typeof chatItem.seller === "object"
-      ? chatItem.seller._id
+      ? chatItem.seller?._id
       : chatItem.seller;
   };
 
@@ -150,11 +172,15 @@ function ChatPage() {
   const filteredChats = chats.filter((chatItem) => {
     const otherUserName = getOtherUserName(chatItem).toLowerCase();
     const productTitle = chatItem.product?.title?.toLowerCase() || "";
+    const myRole = getMyRole(chatItem);
 
-    return (
+    const matchesSearch =
       otherUserName.includes(search.toLowerCase()) ||
-      productTitle.includes(search.toLowerCase())
-    );
+      productTitle.includes(search.toLowerCase());
+
+    const matchesRole = myRole === roleFilter;
+
+    return matchesSearch && matchesRole;
   });
 
   if (!currentUserId) {
@@ -165,6 +191,28 @@ function ChatPage() {
     <div style={styles.page} dir="rtl">
       <aside style={styles.sidebar}>
         <h2 style={styles.sidebarTitle}>الرسائل</h2>
+
+        <div style={styles.filterButtons}>
+          <button
+            onClick={() => setRoleFilter("Buyer")}
+            style={{
+              ...styles.filterButton,
+              ...(roleFilter === "Buyer" ? styles.activeFilterButton : {}),
+            }}
+          >
+            Buyer
+          </button>
+
+          <button
+            onClick={() => setRoleFilter("Seller")}
+            style={{
+              ...styles.filterButton,
+              ...(roleFilter === "Seller" ? styles.activeFilterButton : {}),
+            }}
+          >
+            Seller
+          </button>
+        </div>
 
         <input
           type="text"
@@ -264,9 +312,7 @@ function ChatWindow({
         <div>
           <h6 style={styles.headerName}>{otherUserName}</h6>
 
-          <p style={styles.status}>
-            بخصوص: {productTitle}
-          </p>
+          <p style={styles.status}>بخصوص: {productTitle}</p>
 
           <span
             style={{
@@ -367,7 +413,30 @@ const styles = {
     fontWeight: "700",
     fontSize: "22px",
     textAlign: "center",
-    marginBottom: "18px",
+    marginBottom: "12px",
+  },
+
+  filterButtons: {
+    display: "flex",
+    gap: "8px",
+    marginBottom: "12px",
+    justifyContent: "center",
+  },
+
+  filterButton: {
+    border: "1px solid #5a3e2b",
+    backgroundColor: "#fffaf4",
+    color: "#5a3e2b",
+    borderRadius: "20px",
+    padding: "5px 16px",
+    fontSize: "12px",
+    fontWeight: "700",
+    cursor: "pointer",
+  },
+
+  activeFilterButton: {
+    backgroundColor: "#5a3e2b",
+    color: "white",
   },
 
   searchInput: {

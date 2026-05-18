@@ -8,7 +8,7 @@ export default function ChatsPage() {
     const [selected, setSelected] = useState(null)
     const [show, setShow]         = useState(false)
 
-    useEffect(() => {
+    /*useEffect(() => {
         const fetchChats = async () => {
 
             try {
@@ -35,10 +35,21 @@ export default function ChatsPage() {
 
         fetchChats();
     }, [])
+*/
+useEffect(() => {
+    getAllProductChats().then(data => {
+        console.log("ADMIN PRODUCT CHATS:", data);
+
+        if (Array.isArray(data)) {
+            setChats(data);
+        } else {
+            setChats([]);
+        }
+    });
+}, []);
 
 
-
-        const handleView = async (id) => {
+        /*const handleView = async (id) => {
 
             try {
 
@@ -63,8 +74,14 @@ export default function ChatsPage() {
             }
 
         }
+            */
+const handleView = (id) => {
+    getProductChat(id).then(data => {
+        setSelected(data);
+        setShow(true);
+    });
+};
 
-    
 
 
     const getStatusBg = (status) => {
@@ -99,9 +116,9 @@ export default function ChatsPage() {
                     <tbody>
                         {chats.map(chat => (
                             <tr key={chat._id} style={{ borderBottom: `1px solid ${theme.border}` }}>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textPrimary, verticalAlign: 'middle' }}>{chat.buyer?.name || chat.buyer?.email || "Buyer"}</td>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{chat.seller?.name || chat.seller?.email || "Seller"}</td>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{chat.product?.title || "Product"}</td>
+                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textPrimary, verticalAlign: 'middle' }}>{chat.buyer?.name || chat.buyer?.email || "Unknown Buyer"}</td>
+                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{chat.seller?.name || chat.seller?.email || "Unknown Seller"}</td>
+                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{chat.product?.title || "Unknown Product"}</td>
                                 <td style={{ padding: '12px 16px', verticalAlign: 'middle' }}>
                                     <span style={{
                                         padding: '3px 10px',
