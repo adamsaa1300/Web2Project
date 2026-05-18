@@ -1,20 +1,66 @@
 import { theme } from "../../../theme";
 import { Row, Col, Card } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { getUsers, getAds, getReports, getWeeklyStats } from "../../../api";
+import axios from "axios";
 
 export default function AnalyticsPage() {
     const [users, setUsers]       = useState([])
     const [ads, setAds]           = useState([])
     const [reports, setReports]   = useState([])
     const [weekData, setWeekData] = useState([])
-
     useEffect(() => {
-        getUsers().then(data => setUsers(data))
-        getAds().then(data => setAds(data))
-        getReports().then(data => setReports(data))
-        getWeeklyStats().then(data => setWeekData(data))
-    }, [])
+
+        const fetchAnalytics = async () => {
+
+            try {
+
+                const headers = {
+                    Authorization:
+                        `Bearer ${sessionStorage.getItem("token")}`
+                };
+
+                const usersRes = await axios.get(
+                    "http://localhost:5000/api/users",
+                    { headers }
+                );
+
+                const adsRes = await axios.get(
+                    "http://localhost:5000/api/products",
+                    { headers }
+                );
+
+                const reportsRes = await axios.get(
+                    "http://localhost:5000/api/reports",
+                    { headers }
+                );
+
+                setUsers(usersRes.data);
+
+                setAds(adsRes.data);
+
+                setReports(reportsRes.data);
+
+                setWeekData([
+                    { day: "Mon", val: 4, color: "#7b5647" },
+                    { day: "Tue", val: 7, color: "#a67c6b" },
+                    { day: "Wed", val: 3, color: "#d8c1af" },
+                    { day: "Thu", val: 6, color: "#7fa36b" },
+                    { day: "Fri", val: 8, color: "#5f4034" },
+                    { day: "Sat", val: 5, color: "#b08a5a" },
+                    { day: "Sun", val: 2, color: "#8d6f61" },
+                ]);
+
+            } catch (err) {
+
+                console.log(err);
+
+            }
+
+        };
+
+        fetchAnalytics();
+
+    }, []);
 
     const maxVal = weekData.length ? Math.max(...weekData.map(w => w.val)) || 1 : 1
 
