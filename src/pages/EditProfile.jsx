@@ -9,9 +9,7 @@ export default function EditProfile() {
 
     const token =
         sessionStorage.getItem("token");
-    axios.put(
-        `/api/users/${currentUser.id}`
-    )
+
     if (!token) {
 
       navigate("/login");
@@ -25,7 +23,7 @@ export default function EditProfile() {
     university: currentUser?.uni || "",
     faculty: currentUser?.faculty || "",
     location: currentUser?.location || "",
-    bio: currentUser?.bio || "",
+    birthDate: currentUser?.birthDate || "",
   });
 
   function handleChange(e) {
@@ -35,25 +33,30 @@ export default function EditProfile() {
     });
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    const token = sessionStorage.getItem("token");
+    try {
+      const res = await axios.put(
+        `http://localhost:5000/api/users/${currentUser.id}`,
+        {
+          name: formData.name,
+          email: formData.email,
+          uni: formData.university,
+          faculty: formData.faculty,
+          location: formData.location,
+          birthDate: formData.birthDate,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    sessionStorage.setItem(
-      "user",
-      JSON.stringify({
-        ...currentUser,
-        name: formData.name,
-        email: formData.email,
-        uni: formData.university,
-        faculty: formData.faculty,
-        location: formData.location,
-        bio: formData.bio,
-      })
-    );
-
-    alert("Profile updated successfully ✨");
-
-    window.location.href = "/profile";
+      sessionStorage.setItem("user", JSON.stringify(res.data.user));
+      alert("Profile updated successfully ✨");
+      window.location.href = "/profile";
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update profile");
+    }
   }
 
   return (
@@ -125,14 +128,13 @@ export default function EditProfile() {
             />
           </div>
 
-          <div className="mb-4">
-            <label className="form-label">Bio</label>
-
-            <textarea
+          <div className="mb-3">
+            <label className="form-label">Birth Date</label>
+            <input
+              type="date"
               className="form-control"
-              rows="4"
-              name="bio"
-              value={formData.bio}
+              name="birthDate"
+              value={formData.birthDate ? formData.birthDate.substring(0, 10) : ""}
               onChange={handleChange}
             />
           </div>

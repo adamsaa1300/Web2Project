@@ -113,74 +113,45 @@ export default function EditProfileModal({
         }
 
         try {
-
-            await axios.put(
+            console.log("birthDate value:", form.birthDate);
+            const res = await axios.put(
                 `http://localhost:5000/api/users/${user.id}`,
                 {
                     name: form.name,
-
                     location: form.location,
-
                     faculty: form.faculty,
-
                     uni: form.university,
-
                     birthDate: form.birthDate,
-
-                    email:
-                        `${form.emailUsername}${emailDomain}`,
+                    email: `${form.emailUsername}${emailDomain}`,
                 },
                 {
                     headers: {
-                        Authorization:
-                            `Bearer ${sessionStorage.getItem("token")}`
+                        Authorization: `Bearer ${sessionStorage.getItem("token")}`
                     }
                 }
             );
 
-            const updatedUser = {
-                ...user,
+            const savedUser = {
+            ...res.data,
+            id: res.data._id,
+            birthDate: res.data.birthDate 
+                ? res.data.birthDate.split("T")[0] 
+                : "",
+        };
 
-                fullName: form.name,
-                name: form.name,
+            setUser({
+                ...savedUser,
+                fullName: savedUser.name,
+                major: savedUser.faculty,
+                university: savedUser.uni,
+            });
 
-                location: form.location,
-
-                major: form.faculty,
-                faculty: form.faculty,
-
-                university: form.university,
-                uni: form.university,
-
-                birthDate: form.birthDate,
-
-                email:
-                    `${form.emailUsername}${emailDomain}`,
-            };
-
-            setUser(updatedUser);
-
-            sessionStorage.setItem(
-                "user",
-                JSON.stringify(updatedUser)
-            );
-
-            setMessage(
-                "Profile updated successfully!"
-            );
-
-            setTimeout(() => {
-
-                handleClose();
-
-                setMessage("");
-
-            }, 1000);
+            sessionStorage.setItem("user", JSON.stringify(savedUser));
+            setMessage("Profile updated successfully!");
+            setTimeout(() => { handleClose(); setMessage(""); }, 1000);
 
         } catch (err) {
-
             console.log(err);
-
         }
 
     };
