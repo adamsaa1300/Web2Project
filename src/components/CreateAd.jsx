@@ -64,13 +64,6 @@ function CreateAd({ userRole }) {
     btnPrimary: "#5a3e2b"
   };
 
-  const palestineCities = [
-    "Acre (Akka)", "Al-Bireh", "Beersheba", "Bethlehem", "Deir al-Balah", 
-    "Gaza City", "Haifa", "Hebron", "Jaffa", "Jenin", "Jericho", 
-    "Jerusalem", "Khan Yunis", "Nablus", "Nazareth", "Qalqilya", 
-    "Rafah", "Ramallah", "Safed", "Salfit", "Tiberias", "Tubas", "Tulkarm"
-  ];
-
   const universities = [
     "Palestine University", 
     "An-Najah National University", 
@@ -236,8 +229,8 @@ const handleCancel = () => {
 
       <form className="container pb-5" style={{ paddingTop: "10px" }} onSubmit={handleSubmit}>
         <div className="mb-4">
-          <h2 className="fw-bold mb-1" style={{ color: Colors.text }}>Add Listing</h2>
-          <p className="text-muted small">Dashboard / Add Listing</p>
+          <h2 className="fw-bold mb-1" style={{ color: Colors.text }}>Add Ad</h2>
+          <p className="text-muted small">Dashboard / Add ad</p>
         </div>
 
         <div className="row g-4">
@@ -274,7 +267,7 @@ const handleCancel = () => {
             </div>
 
             <div className="card shadow-sm border-0 p-4 mb-4" style={{ borderRadius: "12px" }}>
-              <h6 className="fw-bold mb-3" style={{ color: Colors.text }}>Listing Details</h6>
+              <h6 className="fw-bold mb-3" style={{ color: Colors.text }}>Ad Details</h6>
               <div className="row g-3">
                 <div className="col-md-12 mb-2">
                   <label className="form-label small fw-bold">Title *</label>
@@ -412,7 +405,7 @@ const handleCancel = () => {
                 Cancel
               </button>
               <button type="submit" className="btn flex-grow-1 py-2 fw-bold shadow text-white border-0" style={{ backgroundColor: Colors.btnPrimary }}>
-                Add Listing <FaArrowRight className="ms-2" size={14} />
+                Add Ad <FaArrowRight className="ms-2" size={14} />
               </button>
             </div>
           </div>
