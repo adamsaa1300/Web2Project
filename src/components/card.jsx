@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {FaMapMarkerAlt, FaUniversity, FaBuilding, FaBoxOpen} from "react-icons/fa";
 import { FaUserCircle } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
+import { startProductChat } from "../api";
 const ProductCard = ({item, setSelectedImages, setSelectedIndex}) => {
     const navigate = useNavigate();
     //aws-work
