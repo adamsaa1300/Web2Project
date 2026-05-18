@@ -2,13 +2,13 @@ import { theme } from "../../../theme"
 import { useState, useEffect } from 'react'
 import { Modal, ListGroup, Button } from 'react-bootstrap'
 import axios from "axios"
-
+import { getAllProductChats, getProductChat } from "../../../api"
 export default function ChatsPage() {
     const [chats, setChats]       = useState([])
     const [selected, setSelected] = useState(null)
     const [show, setShow]         = useState(false)
 
-    useEffect(() => {
+    /*useEffect(() => {
         const fetchChats = async () => {
 
             try {
@@ -35,10 +35,21 @@ export default function ChatsPage() {
 
         fetchChats();
     }, [])
+*/
+useEffect(() => {
+    getAllProductChats().then(data => {
+        console.log("ADMIN PRODUCT CHATS:", data);
+
+        if (Array.isArray(data)) {
+            setChats(data);
+        } else {
+            setChats([]);
+        }
+    });
+}, []);
 
 
-
-        const handleView = async (id) => {
+        /*const handleView = async (id) => {
 
             try {
 
@@ -63,8 +74,14 @@ export default function ChatsPage() {
             }
 
         }
+            */
+const handleView = (id) => {
+    getProductChat(id).then(data => {
+        setSelected(data);
+        setShow(true);
+    });
+};
 
-    
 
 
     const getStatusBg = (status) => {
@@ -99,9 +116,9 @@ export default function ChatsPage() {
                     <tbody>
                         {chats.map(chat => (
                             <tr key={chat._id} style={{ borderBottom: `1px solid ${theme.border}` }}>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textPrimary, verticalAlign: 'middle' }}>{chat.user1}</td>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{chat.user2}</td>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{chat.subject}</td>
+                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textPrimary, verticalAlign: 'middle' }}>{chat.buyer?.name || chat.buyer?.email || "Unknown Buyer"}</td>
+                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{chat.seller?.name || chat.seller?.email || "Unknown Seller"}</td>
+                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{chat.product?.title || "Unknown Product"}</td>
                                 <td style={{ padding: '12px 16px', verticalAlign: 'middle' }}>
                                     <span style={{
                                         padding: '3px 10px',
@@ -132,7 +149,7 @@ export default function ChatsPage() {
             <Modal show={show} onHide={() => setShow(false)} centered>
                 <Modal.Header closeButton style={{ backgroundColor: theme.cardBg, borderBottom: `1px solid ${theme.border}` }}>
                     <Modal.Title style={{ color: theme.textPrimary, fontSize: '15px', fontWeight: '600' }}>
-                        {selected?.user1} → {selected?.user2}
+                        {selected?.buyer?.name || "Buyer"} → {selected?.seller?.name || "Seller"}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={{ backgroundColor: theme.pageBg, padding: '16px', maxHeight: '400px', overflowY: 'auto' }}>
@@ -144,7 +161,7 @@ export default function ChatsPage() {
                             padding: '10px 14px',
                             marginBottom: '10px',
                         }}>
-                            <div style={{ fontSize: '12px', fontWeight: '600', color: theme.textPrimary, marginBottom: '4px' }}>{msg.sender}</div>
+                            <div style={{ fontSize: '12px', fontWeight: '600', color: theme.textPrimary, marginBottom: '4px' }}>{msg.sender?.name || msg.sender?.email || "User"}</div>
                             <div style={{ fontSize: '13px', color: theme.textMuted }}>{msg.text}</div>
                         </div>
                     ))}
