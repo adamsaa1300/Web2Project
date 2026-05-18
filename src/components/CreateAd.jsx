@@ -236,8 +236,8 @@ const handleCancel = () => {
 
       <form className="container pb-5" style={{ paddingTop: "10px" }} onSubmit={handleSubmit}>
         <div className="mb-4">
-          <h2 className="fw-bold mb-1" style={{ color: Colors.text }}>Add Listing</h2>
-          <p className="text-muted small">Dashboard / Add Listing</p>
+          <h2 className="fw-bold mb-1" style={{ color: Colors.text }}>Add Ad</h2>
+          <p className="text-muted small">Dashboard / Add ad</p>
         </div>
 
         <div className="row g-4">
@@ -274,7 +274,7 @@ const handleCancel = () => {
             </div>
 
             <div className="card shadow-sm border-0 p-4 mb-4" style={{ borderRadius: "12px" }}>
-              <h6 className="fw-bold mb-3" style={{ color: Colors.text }}>Listing Details</h6>
+              <h6 className="fw-bold mb-3" style={{ color: Colors.text }}>Ad Details</h6>
               <div className="row g-3">
                 <div className="col-md-12 mb-2">
                   <label className="form-label small fw-bold">Title *</label>
