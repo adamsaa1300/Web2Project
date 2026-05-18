@@ -64,13 +64,6 @@ function CreateAd({ userRole }) {
     btnPrimary: "#5a3e2b"
   };
 
-  const palestineCities = [
-    "Acre (Akka)", "Al-Bireh", "Beersheba", "Bethlehem", "Deir al-Balah", 
-    "Gaza City", "Haifa", "Hebron", "Jaffa", "Jenin", "Jericho", 
-    "Jerusalem", "Khan Yunis", "Nablus", "Nazareth", "Qalqilya", 
-    "Rafah", "Ramallah", "Safed", "Salfit", "Tiberias", "Tubas", "Tulkarm"
-  ];
-
   const universities = [
     "Palestine University", 
     "An-Najah National University", 
