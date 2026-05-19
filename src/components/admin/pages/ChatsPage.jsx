@@ -1,7 +1,6 @@
 import { theme } from "../../../theme"
 import { useState, useEffect } from 'react'
-import { Modal, ListGroup, Button } from 'react-bootstrap'
-import axios from "axios"
+import { Modal, ListGroup, Button, Table } from 'react-bootstrap'
 import { getAllProductChats, getProductChat } from "../../../api"
 export default function ChatsPage() {
     const [chats, setChats]       = useState([])
@@ -103,7 +102,7 @@ const handleView = (id) => {
             <h4 style={{ color: theme.textPrimary, marginBottom: '20px' }}>Chats</h4>
 
             <div style={{ backgroundColor: theme.cardBg, borderRadius: theme.borderRadius.lg, border: `1px solid ${theme.border}`, overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+                <Table style={{ margin: 0, tableLayout: 'fixed', width: '100%' }}>
                     <thead>
                         <tr style={{ backgroundColor: theme.cardBg2 }}>
                             <th style={{ padding: '12px 16px', fontSize: '12px', color: theme.textMuted, fontWeight: '600', borderBottom: `2px solid ${theme.border}`, width: '180px' }}>User 1</th>
@@ -115,10 +114,18 @@ const handleView = (id) => {
                     </thead>
                     <tbody>
                         {chats.map(chat => (
-                            <tr key={chat._id} style={{ borderBottom: `1px solid ${theme.border}` }}>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textPrimary, verticalAlign: 'middle' }}>{chat.buyer?.name || chat.buyer?.email || "Unknown Buyer"}</td>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{chat.seller?.name || chat.seller?.email || "Unknown Seller"}</td>
-                                <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>{chat.product?.title || "Unknown Product"}</td>
+<tr key={chat._id}>
+    <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textPrimary, verticalAlign: 'middle' }}>
+        {chat.buyer?.name || chat.buyer?.email || "Unknown Buyer"}
+    </td>
+
+    <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>
+        {chat.seller?.name || chat.seller?.email || "Unknown Seller"}
+    </td>
+
+    <td style={{ padding: '12px 16px', fontSize: '13px', color: theme.textMuted, verticalAlign: 'middle' }}>
+        {chat.product?.title || "Unknown Product"}
+    </td>
                                 <td style={{ padding: '12px 16px', verticalAlign: 'middle' }}>
                                     <span style={{
                                         padding: '3px 10px',
@@ -143,7 +150,7 @@ const handleView = (id) => {
                             </tr>
                         ))}
                     </tbody>
-                </table>
+                </Table>
             </div>
 
             <Modal show={show} onHide={() => setShow(false)} centered>
