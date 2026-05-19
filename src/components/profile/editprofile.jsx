@@ -3,11 +3,11 @@ import { Modal, Form, Button, Row, Col } from "react-bootstrap";
 import axios from "axios";
 
 export default function EditProfileModal({
-                                             show,
-                                             handleClose,
-                                             user,
-                                             setUser,
-                                         }) {
+    show,
+    handleClose,
+    user,
+    setUser,
+}) {
 
     const emailDomain =
         user.email?.includes("@gmail.com")
@@ -49,6 +49,12 @@ export default function EditProfileModal({
             user.email?.split("@")[0] || "",
     });
 
+    const [profileImageFile, setProfileImageFile] = useState(null);
+
+    const [previewImage, setPreviewImage] = useState(
+        user.profileImage || ""
+    );
+
     const [message, setMessage] = useState("");
 
     const profileIncomplete =
@@ -72,6 +78,28 @@ export default function EditProfileModal({
             ...form,
             [e.target.name]: e.target.value,
         });
+
+    };
+
+    const handleImageChange = (e) => {
+
+        const file = e.target.files[0];
+
+        if (!file) return;
+
+        setProfileImageFile(file);
+
+        setPreviewImage(
+            URL.createObjectURL(file)
+        );
+
+    };
+
+    const handleRemoveImage = () => {
+
+        setProfileImageFile(null);
+
+        setPreviewImage("");
 
     };
 
@@ -113,31 +141,49 @@ export default function EditProfileModal({
         }
 
         try {
-            console.log("birthDate value:", form.birthDate);
+
+            const formData = new FormData();
+
+            formData.append("name", form.name);
+            formData.append("location", form.location);
+            formData.append("faculty", form.faculty);
+            formData.append("uni", form.university);
+            formData.append("birthDate", form.birthDate);
+
+            formData.append(
+                "email",
+                `${form.emailUsername}${emailDomain}`
+            );
+
+            if (profileImageFile) {
+
+                formData.append(
+                    "profileImage",
+                    profileImageFile
+                );
+
+            }
+
             const res = await axios.put(
                 `http://localhost:5000/api/users/${user.id}`,
-                {
-                    name: form.name,
-                    location: form.location,
-                    faculty: form.faculty,
-                    uni: form.university,
-                    birthDate: form.birthDate,
-                    email: `${form.emailUsername}${emailDomain}`,
-                },
+                formData,
                 {
                     headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem("token")}`
+                        Authorization:
+                            `Bearer ${sessionStorage.getItem("token")}`,
+                        "Content-Type":
+                            "multipart/form-data",
                     }
                 }
             );
 
             const savedUser = {
-            ...res.data,
-            id: res.data._id,
-            birthDate: res.data.birthDate 
-                ? res.data.birthDate.split("T")[0] 
-                : "",
-        };
+                ...res.data,
+                id: res.data._id,
+                birthDate: res.data.birthDate
+                    ? res.data.birthDate.split("T")[0]
+                    : "",
+            };
 
             setUser({
                 ...savedUser,
@@ -146,12 +192,26 @@ export default function EditProfileModal({
                 university: savedUser.uni,
             });
 
-            sessionStorage.setItem("user", JSON.stringify(savedUser));
-            setMessage("Profile updated successfully!");
-            setTimeout(() => { handleClose(); setMessage(""); }, 1000);
+            sessionStorage.setItem(
+                "user",
+                JSON.stringify(savedUser)
+            );
+
+            setMessage(
+                "Profile updated successfully!"
+            );
+
+            setTimeout(() => {
+
+                handleClose();
+                setMessage("");
+
+            }, 1000);
 
         } catch (err) {
+
             console.log(err);
+
         }
 
     };
@@ -210,6 +270,103 @@ export default function EditProfileModal({
                 )}
 
                 <Form>
+
+                    <Form.Group className="mb-4">
+
+                        <Form.Label>
+                            Profile Photo
+                        </Form.Label>
+
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "15px",
+                                flexWrap: "wrap",
+                            }}
+                        >
+
+                            <div
+                                style={{
+                                    width: "90px",
+                                    height: "90px",
+                                    borderRadius: "50%",
+                                    overflow: "hidden",
+                                    background: "#f3e7d7",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    border: "3px solid white",
+                                    boxShadow:
+                                        "0 4px 12px rgba(0,0,0,0.08)",
+                                }}
+                            >
+
+                                {previewImage ? (
+
+                                    <img
+                                        src={previewImage}
+                                        alt="Profile"
+                                        style={{
+                                            width: "100%",
+                                            height: "100%",
+                                            objectFit: "cover",
+                                        }}
+                                    />
+
+                                ) : (
+
+                                    <i
+                                        className="bi bi-person-fill"
+                                        style={{
+                                            fontSize: "2.3rem",
+                                            color: "#7b5647",
+                                        }}
+                                    />
+
+                                )}
+
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    gap: "10px",
+                                    flexWrap: "wrap",
+                                }}
+                            >
+
+                                <label
+                                    className="btn btn-outline-secondary"
+                                >
+
+                                    Choose Photo
+
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        hidden
+                                        onChange={handleImageChange}
+                                    />
+
+                                </label>
+
+                                {previewImage && (
+
+                                    <Button
+                                        variant="outline-danger"
+                                        onClick={handleRemoveImage}
+                                    >
+                                        Remove
+                                    </Button>
+
+                                )}
+
+                            </div>
+
+                        </div>
+
+                    </Form.Group>
 
                     <Form.Group className="mb-3">
 
@@ -432,7 +589,7 @@ export default function EditProfileModal({
                     }}
                 >
                     Save Changes
-                </Button>
+                </Button> 
 
             </Modal.Footer>
 

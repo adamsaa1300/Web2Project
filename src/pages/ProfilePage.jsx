@@ -87,39 +87,24 @@ export default function ProfilePage() {
           : [];
 
       const formattedAds = productsArray.map((ad) => ({
+  id: ad._id,
+  title: ad.title,
+  description: ad.description,
+  category: ad.category,
+  location: ad.location || "Unknown Location",
+  university: ad.university || "Unknown University",
+  college: ad.college || "Unknown College",
+  condition: ad.condition || "Unknown Condition",
+  price: `₪${ad.price}`,
+  status: ad.status?.toLowerCase() || "available",
 
-        id: ad._id,
+  images: ad.images || [],
 
-        title: ad.title,
-
-        description: ad.description,
-
-        category: ad.category,
-
-        location:
-            ad.location || "Unknown Location",
-
-        university:
-            ad.university || "Unknown University",
-
-        college:
-            ad.college || "Unknown College",
-
-        condition:
-            ad.condition || "Unknown Condition",
-
-        price: `₪${ad.price}`,
-
-        status:
-            ad.status || "available",
-
-        image:
-            ad.images && ad.images.length > 0
-                ? ad.images[0]
-                : "https://via.placeholder.com/300",
-
-      }));
-
+  image:
+    ad.images && ad.images.length > 0
+      ? ad.images[0]
+      : "https://via.placeholder.com/300",
+}));
       setListings(formattedAds);
 
     } catch (err) {
@@ -149,8 +134,7 @@ export default function ProfilePage() {
     year: "Student",
     location: currentUser?.location || "Location",
     email: currentUser?.email || "email@sawweq.com",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80",
+    avatar: currentUser?.profileImage || "",
     cover:
       "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
   });
@@ -179,6 +163,7 @@ export default function ProfilePage() {
     setShowDeleteModal(true);
 
   };
+  
   const confirmDelete = async () => {
 
     try {
@@ -207,39 +192,30 @@ export default function ProfilePage() {
     }
 
   };
-  const handleStatusChange = async (
-      id,
-      newStatus
-  ) => {
+  const handleStatusChange = async (id, newStatus) => {
+  try {
+    await axios.put(
+      `http://localhost:5000/api/products/${id}`,
+      { status: newStatus },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      }
+    );
 
-    try {
+    setListings((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? { ...item, status: newStatus.toLowerCase() }
+          : item
+      )
+    );
 
-      await axios.put(
-
-          `http://localhost:5000/api/products/${id}`,
-
-          {
-            status: newStatus
-          },
-
-          {
-            headers: {
-              Authorization:
-                  `Bearer ${sessionStorage.getItem("token")}`
-            }
-          }
-
-      );
-
-      fetchUserProducts();
-
-    } catch (err) {
-
-      console.log(err);
-
-    }
-
-  };
+  } catch (err) {
+    console.log(err);
+  }
+};
 async function handleMarkSold(id) {
   try {
     await fetch(`http://localhost:5000/api/products/${id}`, {

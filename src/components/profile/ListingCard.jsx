@@ -1,33 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     FaMapMarkerAlt,
     FaUniversity,
     FaBuilding,
     FaBoxOpen
 } from "react-icons/fa";
+
 export default function ListingCard({
-                                        item,
-                                        colors,
-                                        shellCard,
-                                        onDelete,
-                                        onEdit,
-                                        onStatusChange,
-                                    }){
+    item,
+    colors,
+    shellCard,
+    onDelete,
+    onEdit,
+    onStatusChange,
+}) {
 
-    const status = item.status?.toLowerCase();
-    const statusBg =
-        status === "sold"
-            ? "#fdecea"
-            : "#e6f4ec";
+    const status = item.status?.toLowerCase() || "available";
 
-    const statusColor =
-        status === "sold"
-            ? "#b5451b"
-            : "#2d7a4f";
+    const images =
+        item.images?.length > 0
+            ? item.images
+            : [item.image];
+
+    const [imageIndex, setImageIndex] = useState(0);
+
+    const nextImage = () => {
+        setImageIndex((prev) =>
+            prev === images.length - 1 ? 0 : prev + 1
+        );
+    };
+
+    const prevImage = () => {
+        setImageIndex((prev) =>
+            prev === 0 ? images.length - 1 : prev - 1
+        );
+    };
+
     return (
-
         <div className="col-md-6 col-xl-4">
-
             <div
                 style={{
                     ...shellCard,
@@ -36,22 +46,17 @@ export default function ListingCard({
                     cursor: "pointer",
                     height: "100%",
                 }}
-
                 onMouseEnter={(e) => {
-                    e.currentTarget.style.transform =
-                        "translateY(-8px)";
+                    e.currentTarget.style.transform = "translateY(-8px)";
                 }}
-
                 onMouseLeave={(e) => {
-                    e.currentTarget.style.transform =
-                        "translateY(0px)";
+                    e.currentTarget.style.transform = "translateY(0px)";
                 }}
             >
-
                 <div style={{ position: "relative" }}>
 
                     <img
-                        src={item.image}
+                        src={images[imageIndex]}
                         alt={item.title}
                         style={{
                             width: "100%",
@@ -59,6 +64,58 @@ export default function ListingCard({
                             objectFit: "cover",
                         }}
                     />
+
+                    {images.length > 1 && (
+                        <>
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    prevImage();
+                                }}
+                                style={{
+                                    position: "absolute",
+                                    left: 10,
+                                    top: "50%",
+                                    transform: "translateY(-50%)",
+                                    border: "none",
+                                    borderRadius: "50%",
+                                    width: 36,
+                                    height: 36,
+                                    background: "rgba(255,255,255,0.9)",
+                                    fontSize: 24,
+                                    cursor: "pointer",
+                                    zIndex: 5,
+                                }}
+                            >
+                                ‹
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    nextImage();
+                                }}
+                                style={{
+                                    position: "absolute",
+                                    right: 10,
+                                    top: "50%",
+                                    transform: "translateY(-50%)",
+                                    border: "none",
+                                    borderRadius: "50%",
+                                    width: 36,
+                                    height: 36,
+                                    background: "rgba(255,255,255,0.9)",
+                                    fontSize: 24,
+                                    cursor: "pointer",
+                                    zIndex: 5,
+                                }}
+                            >
+                                ›
+                            </button>
+                        </>
+                    )}
 
                     <span
                         style={{
@@ -75,13 +132,11 @@ export default function ListingCard({
                     >
                         {item.category}
                     </span>
+
                     <select
-                        value={item.status}
+                        value={status}
                         onChange={(e) =>
-                            onStatusChange(
-                                item.id,
-                                e.target.value
-                            )
+                            onStatusChange(item.id, e.target.value)
                         }
                         style={{
                             position: "absolute",
@@ -96,18 +151,16 @@ export default function ListingCard({
                             cursor: "pointer",
                             appearance: "none",
                             backgroundColor:
-                                item.status === "sold"
+                                status === "sold"
                                     ? "#f4d7d3"
                                     : "#e7efe1",
                             color:
-                                item.status === "sold"
+                                status === "sold"
                                     ? "#8b2e2e"
                                     : "#557c55",
-                            boxShadow:
-                                "0 2px 8px rgba(0,0,0,0.08)",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                         }}
                     >
-
                         <option value="available">
                             Available
                         </option>
@@ -115,9 +168,7 @@ export default function ListingCard({
                         <option value="sold">
                             Sold
                         </option>
-
                     </select>
-
                 </div>
 
                 <div className="p-4 d-flex flex-column gap-3 h-100">
@@ -140,7 +191,6 @@ export default function ListingCard({
                             fontWeight: "500"
                         }}
                     >
-
                         <div className="d-flex align-items-center justify-content-center gap-2">
                             <FaMapMarkerAlt />
                             <span>{item.location}</span>
@@ -160,16 +210,13 @@ export default function ListingCard({
                             <FaBoxOpen />
                             <span>{item.condition}</span>
                         </div>
-
                     </div>
 
                     <div className="mt-2">
 
                         <div
                             className="fw-bold text-center mb-2"
-                            style={{
-                                color: "#2f1e12"
-                            }}
+                            style={{ color: "#2f1e12" }}
                         >
                             Description
                         </div>
@@ -186,20 +233,16 @@ export default function ListingCard({
                                 ? item.description.slice(0, 100) + "..."
                                 : item.description}
                         </div>
-
                     </div>
 
                     <div className="d-flex justify-content-between align-items-center">
 
                         <h4
                             className="fw-bold mb-0"
-                            style={{
-                                color: "#2f1e12"
-                            }}
+                            style={{ color: "#2f1e12" }}
                         >
                             {item.price}
                         </h4>
-
                     </div>
 
                     <div className="d-flex gap-2 mt-2">
@@ -245,14 +288,9 @@ export default function ListingCard({
                         >
                             Delete
                         </button>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     );
 }

@@ -42,13 +42,29 @@ export default function ProfileHeader({
                             flexShrink: 0,
                         }}
                     >
-                        <i
-                            className="bi bi-person-fill"
-                            style={{
-                                fontSize: "2.7rem",
-                                color: colors.primary,
-                            }}
-                        />
+                        {profileData.avatar ? (
+
+    <img
+        src={profileData.avatar}
+        alt="Profile"
+        style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+        }}
+    />
+
+) : (
+
+    <i
+        className="bi bi-person-fill"
+        style={{
+            fontSize: "2.7rem",
+            color: colors.primary,
+        }}
+    />
+
+)}
                     </div>
 
                     <div className="flex-grow-1 pt-md-3">
