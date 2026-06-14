@@ -13,7 +13,12 @@ const navItems = [
 export default function Sidebar({ activePage, setActivePage }) {
     return (
         <div style={{
-            height: '100vh',
+            position: 'fixed',
+            top: '60px',
+            left: 0,
+            width: '220px',
+            height: 'calc(100vh - 60px)',
+            overflowY: 'auto',
             backgroundColor: theme.cardBg,
             borderLeft: `1px solid ${theme.border}`,
         }}>
